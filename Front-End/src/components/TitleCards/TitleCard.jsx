@@ -10,7 +10,7 @@ const TitleCard = ({ title,  category}) => {
         method: 'GET',
         headers: {
             accept: 'application/json',
-            Authorization: 'Bearer ${process.env.REACT_APP_API_KEY}'
+            Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`
         }
     };
 
