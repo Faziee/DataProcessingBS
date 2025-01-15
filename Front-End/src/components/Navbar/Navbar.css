@@ -62,7 +62,6 @@
     background: #191919;
     padding: 18px 22px;
     border-radius: 2px;
-    text-decoration: underline;
     z-index: 1;
     display: none;
 }
@@ -70,6 +69,7 @@
 .navbar .dropdown p{
     font-size: 13px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .navbar-profile:hover .dropdown{
@@ -78,5 +78,10 @@
 
 .nav-dark{
     background: #141414;
+}
+
+.no-decoration {
+    text-decoration: none;
+    color: inherit;
 }
 
