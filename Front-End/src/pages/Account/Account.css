@@ -1,0 +1,98 @@
+.account-page {
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.account-container {
+    background: linear-gradient(180deg, #202020, #181818);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    margin: 150px auto 40px;
+    padding: 20px;
+    color: #fff;
+}
+
+.account-container h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #e50914;
+    text-align: center;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #2c2c2c;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+
+.info-field:hover {
+    background-color: #383838;
+}
+
+.info-field label {
+    font-weight: bold;
+    color: #b3b3b3;
+    flex-shrink: 0;
+}
+
+.info-field p {
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+    min-width: 50%;
+    height: 20px;
+    text-align: right;
+}
+
+.search-section {
+    padding: 20px;
+    background-color: #181818;
+    color: #fff;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #202020;
+    color: #fff;
+}
+
+.search-button {
+    padding: 10px 20px;
+    background-color: #e50914;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.search-button:hover {
+    background-color: #f40612;
+}
+

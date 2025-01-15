@@ -5,7 +5,7 @@ import search_icon from '../../assets/search_icon.svg'
 import bell_icon from '../../assets/bell_icon.svg'
 import profile_img from '../../assets/profile_img.png'
 import dropdown_icon from '../../assets/caret_icon.svg'
-
+import { Link } from 'react-router-dom';
 
 
 
@@ -29,7 +29,7 @@ const Navbar = () => {
             <div className='navbar-left'>
                 <img src={logo} alt="Netflix logo"/>
                 <ul>
-                    <li>Home</li>
+                    <li> <Link to="/" className="no-decoration">Home</Link></li>
                     <li>Tv Shows</li>
                     <li>Movies</li>
                     <li>New and Popular</li>
@@ -39,13 +39,14 @@ const Navbar = () => {
             </div>
             <div className='navbar-right'>
                 <img src={search_icon} alt='search icon' className='icons'/>
-                <p>Children</p>
+                <p>Name here of user</p>
                 <img src={bell_icon} alt='bell icon' className='icons'/>
                 <div className='navbar-profile'>
                     <img src={profile_img} alt='bell icon' className='profile'/>
                     <img src={dropdown_icon} alt='bell icon' />
                     <div className='dropdown'>
-                        <p>Sign out</p>
+                        <p><Link to="/account" className='no-decoration'>Account</Link></p>
+                        <p style={{textDecoration: 'underline'}}>Sign out</p>
                     </div>
                 </div>
             </div>
