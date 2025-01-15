@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/fazie/Desktop/DataProcessingBS/DataProcessingBS.csproj": {}
+    "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/DataProcessingBS.csproj": {}
   },
   "projects": {
-    "/Users/fazie/Desktop/DataProcessingBS/DataProcessingBS.csproj": {
+    "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/DataProcessingBS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/fazie/Desktop/DataProcessingBS/DataProcessingBS.csproj",
+        "projectUniqueName": "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/DataProcessingBS.csproj",
         "projectName": "DataProcessingBS",
-        "projectPath": "/Users/fazie/Desktop/DataProcessingBS/DataProcessingBS.csproj",
+        "projectPath": "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/DataProcessingBS.csproj",
         "packagesPath": "/Users/fazie/.nuget/packages/",
-        "outputPath": "/Users/fazie/Desktop/DataProcessingBS/obj/",
+        "outputPath": "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
@@ -48,9 +48,19 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.1.0, )"
             }
           },
           "imports": [
