@@ -4,6 +4,7 @@ using DataProcessingBS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataProcessingBS.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20250117133011_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,15 +34,17 @@ namespace DataProcessingBS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Account_Id"));
 
-                    b.Property<bool?>("Blocked")
-                        .HasColumnType("bit");
+                    b.Property<string>("Blocked")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Is_Invited")
-                        .HasColumnType("bit");
+                    b.Property<string>("Is_Invited")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -71,8 +76,9 @@ namespace DataProcessingBS.Migrations
                     b.Property<DateTime>("Create_Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("Is_Active")
-                        .HasColumnType("bit");
+                    b.Property<string>("Is_Active")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Key")
                         .IsRequired()
@@ -185,8 +191,10 @@ namespace DataProcessingBS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Movie_Id"));
 
-                    b.Property<bool?>("Has_Subtitles")
-                        .HasColumnType("bit");
+                    b.Property<string>("Has_Subtitles")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<int>("Media_Id")
                         .HasColumnType("int");
@@ -260,9 +268,6 @@ namespace DataProcessingBS.Migrations
                     b.Property<int>("Account_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Account_Id1")
-                        .HasColumnType("int");
-
                     b.Property<DateOnly>("Renewal_Date")
                         .HasColumnType("date");
 
@@ -277,7 +282,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Subscription_Id");
 
-                    b.HasIndex("Account_Id1");
+                    b.HasIndex("Account_Id");
 
                     b.ToTable("Subscriptions");
                 });
@@ -367,8 +372,10 @@ namespace DataProcessingBS.Migrations
             modelBuilder.Entity("DataProcessingBS.Entities.Subscription", b =>
                 {
                     b.HasOne("DataProcessingBS.Entities.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("Account_Id1");
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("Account_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -376,6 +383,8 @@ namespace DataProcessingBS.Migrations
             modelBuilder.Entity("DataProcessingBS.Entities.Account", b =>
                 {
                     b.Navigation("Profiles");
+
+                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }

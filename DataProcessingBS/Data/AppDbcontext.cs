@@ -11,6 +11,8 @@ public class AppDbcontext : DbContext
         
     }
     
+    public DbSet<ApiKey> ApiKeys { get; set; }
+   
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Episode> Episodes { get; set; }
     public DbSet<Genre> Genres { get; set; }
@@ -26,6 +28,13 @@ public class AppDbcontext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure entity relationships and constraints here if needed
+        base.OnModelCreating(modelBuilder);
+
+        // Define relationship between Account and Profile
+        modelBuilder.Entity<Profile>()
+            .HasOne(p => p.Account)  // Profile has one Account
+            .WithMany(a => a.Profiles) // Account can have many Profiles
+            .HasForeignKey(p => p.Account_Id); // Account_Id is the foreign key in Profile
     }
+
 }

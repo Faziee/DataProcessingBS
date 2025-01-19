@@ -5148,7 +5148,6 @@
       "packagesPath": "/Users/fazie/.nuget/packages/",
       "outputPath": "/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/obj/",
       "projectStyle": "PackageReference",
-      "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
         "/Users/fazie/.nuget/NuGet/NuGet.Config"
       ],
@@ -5173,7 +5172,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "all"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {

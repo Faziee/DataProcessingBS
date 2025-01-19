@@ -13,4 +13,6 @@ public class Profile
     public int? User_Age { get; set; }
     public string? Language { get; set; }
     
+    public Account? Account { get; set; }
+    
 }

@@ -12,4 +12,5 @@ public class Subscription
     public string? Type { get; set; }
     public DateOnly Start_Date { get; set; }
     public DateOnly Renewal_Date { get; set; }
+    public Account? Account { get; set; }
 }
