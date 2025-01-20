@@ -11,7 +11,7 @@ namespace DataProcessingBS.Modules
     {
         public static void AddAccountEndpoints(this IEndpointRouteBuilder app)
         {
-            // Create Account
+            /*// Create Account
             app.MapPost("/accounts", async ([FromBody] CreateAccountRequest createAccountRequest, [FromServices] AppDbcontext dbContext) =>
             {
                 var account = new Account
@@ -27,35 +27,35 @@ namespace DataProcessingBS.Modules
                 await dbContext.Accounts.AddAsync(account);
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(account);
-            });
+            });*/
             
             // // Create Account
-            // app.MapPost("/accounts", async ([FromBody] CreateAccountRequest createAccountRequest, 
-            //     [FromServices] AppDbcontext dbContext,
-            //     [FromServices] ApiKeyService apiKeyService) =>
-            // {
-            //     // Create the new account
-            //     var account = new Account
-            //     {
-            //         Email = createAccountRequest.Email,
-            //         Password = createAccountRequest.Password,
-            //         Payment_Method = createAccountRequest.Payment_Method,
-            //         Blocked = createAccountRequest.Blocked,
-            //         Is_Invited = createAccountRequest.Is_Invited,
-            //         Trial_End_Date = createAccountRequest.Trial_End_Date
-            //     };
-            //
-            //     // Save account to the database
-            //     await dbContext.Accounts.AddAsync(account);
-            //     await dbContext.SaveChangesAsync();
-            //
-            //     // Generate and store API key
-            //     var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
-            //
-            //     // Return the account and generated API key
-            //     return Results.Ok(new { Account = account, ApiKey = apiKey });
-            // });
-            //
+            app.MapPost("/accounts", async ([FromBody] CreateAccountRequest createAccountRequest, 
+                [FromServices] AppDbcontext dbContext,
+                [FromServices] ApiKeyService apiKeyService) =>
+            {
+                // Create the new account
+                var account = new Account
+                {
+                    Email = createAccountRequest.Email,
+                    Password = createAccountRequest.Password,
+                    Payment_Method = createAccountRequest.Payment_Method,
+                    Blocked = createAccountRequest.Blocked,
+                    Is_Invited = createAccountRequest.Is_Invited,
+                    Trial_End_Date = createAccountRequest.Trial_End_Date
+                };
+            
+                // Save account to the database
+                await dbContext.Accounts.AddAsync(account);
+                await dbContext.SaveChangesAsync();
+            
+                // Generate and store API key
+                var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
+            
+                // Return the account and generated API key
+                return Results.Ok(new { Account = account, ApiKey = apiKey });
+            });
+            
             
             // Update Account by Account_Id
             app.MapPut("/accounts/{accountId}", async (int accountId,[FromBody] UpdateAccountRequest updateAccountRequest, [FromServices] AppDbcontext dbContext) =>

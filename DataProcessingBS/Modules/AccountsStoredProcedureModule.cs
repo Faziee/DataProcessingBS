@@ -10,37 +10,37 @@ public static class AccountsStoredProcedureModule
 {
     public static void AddAccountStoredProcedureEndpoints(this IEndpointRouteBuilder app)
         {
-            // Create Account
+            /*// Create Account
             app.MapPost("/stored-procedure-create-account", async ([FromBody] CreateAccountRequest createAccountRequest,
                 [FromServices] AppDbcontext dbContext) =>
             {
                 await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
                 return Results.Ok();
-            });
+            });*/
             
-            // // Create Account using Stored Procedure
-            // app.MapPost("/stored-procedure-create-account", async ([FromBody] CreateAccountRequest createAccountRequest,
-            //     [FromServices] AppDbcontext dbContext,
-            //     [FromServices] ApiKeyService apiKeyService) =>
-            // {
-            //     // Execute the stored procedure to create the account
-            //     await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
-            //
-            //     // Retrieve the newly created account's AccountId (assuming it’s auto-generated)
-            //     var account = await dbContext.Accounts
-            //         .FirstOrDefaultAsync(a => a.Email == createAccountRequest.Email);
-            //
-            //     if (account != null)
-            //     {
-            //         // Generate and store the API key using the stored procedure
-            //         var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
-            //
-            //         // Return the account and the API key
-            //         return Results.Ok(new { Account = account, ApiKey = apiKey });
-            //     }
-            //
-            //     return Results.BadRequest("Account creation failed.");
-            // });
+            // Create Account using Stored Procedure
+            app.MapPost("/stored-procedure-create-account", async ([FromBody] CreateAccountRequest createAccountRequest,
+                [FromServices] AppDbcontext dbContext,
+                [FromServices] ApiKeyService apiKeyService) =>
+            {
+                // Execute the stored procedure to create the account
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
+            
+                // Retrieve the newly created account's AccountId (assuming it’s auto-generated)
+                var account = await dbContext.Accounts
+                    .FirstOrDefaultAsync(a => a.Email == createAccountRequest.Email);
+            
+                if (account != null)
+                {
+                    // Generate and store the API key using the stored procedure
+                    var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
+            
+                    // Return the account and the API key
+                    return Results.Ok(new { Account = account, ApiKey = apiKey });
+                }
+            
+                return Results.BadRequest("Account creation failed.");
+            });
             
             // Update Account
             app.MapPut("/stored-procedure-update-account-by-id", async ([FromBody] UpdateAccountRequest updateAccountRequest,
