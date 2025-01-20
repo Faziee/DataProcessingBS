@@ -15,6 +15,7 @@
     margin: 150px auto 40px;
     padding: 20px;
     color: #fff;
+    border-radius: 8px;
 }
 
 .account-container h1 {
@@ -28,6 +29,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    border-radius: 8px;
 }
 
 .info-field {
@@ -63,6 +65,7 @@
     padding: 20px;
     background-color: #181818;
     color: #fff;
+    border-radius: 4px;
 }
 
 .search-container {
@@ -94,5 +97,56 @@
 
 .search-button:hover {
     background-color: #f40612;
+}
+
+.email-search-section {
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+/* Container for the scrollable section */
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+}
+
+/* Individual account card styling */
+.account-card {
+    background: linear-gradient(180deg, #2c2c2c, #181818);
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    padding: 15px;
+    min-width: 200px;
+    max-width: 200px;
+    height: 150px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.account-card p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Smooth scroll hover effect */
+.account-card:hover {
+    background-color: #383838;
+    transform: scale(1.05);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+
+.all-accounts-section {
+    margin-top: 40px; /* Adds spacing above the All Accounts container */
+    padding: 20px;
+    background-color: #181818; /* Matches the styling of the other sections */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
