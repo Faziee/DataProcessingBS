@@ -156,3 +156,4 @@
 /Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/obj/Debug/net9.0/DataProcessingBS.pdb
 /Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/obj/Debug/net9.0/DataProcessingBS.genruntimeconfig.cache
 /Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/obj/Debug/net9.0/ref/DataProcessingBS.dll
+/Users/fazie/Desktop/B0MB SQUAD/DataProcessingBS/DataProcessingBS/bin/Debug/net9.0/Newtonsoft.Json.dll

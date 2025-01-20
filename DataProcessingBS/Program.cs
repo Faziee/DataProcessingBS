@@ -2,8 +2,6 @@ using DataProcessingBS.Data;
 using DataProcessingBS.Middleware;
 using DataProcessingBS.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using DataProcessingBS.Contracts;
 using DataProcessingBS.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,37 +10,12 @@ builder.Services.AddControllers().AddXmlSerializerFormatters();  // Allows XML r
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpClient<TmdbService>();
+builder.Services.AddRazorPages();
+
 builder.Services.AddScoped<ApiKeyService>();
 
-//builder.Services.AddSwaggerGen();
-
-// Add Swagger with API Key Authentication
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
-    {
-        In = ParameterLocation.Header,
-        Name = "Api-Key",  // Name of the header
-        Type = SecuritySchemeType.ApiKey,
-        Description = "Enter your API key"
-    });
-
-    // Enforce the API Key requirement for all routes
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "ApiKey"
-                }
-            },
-            new List<string>()
-        }
-    });
-});
+builder.Services.AddSwaggerGen();
 
 // CORS setup for React app, will be used eventually to connect our front end
 builder.Services.AddCors(options =>
@@ -69,10 +42,12 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 var app = builder.Build();
 
 // Middleware configuration, commented out since Api Key authentication is not fully implemented yet
-//app.UseMiddleware<ApiKeyMiddleware>();
+app.UseMiddleware<ApiKeyMiddleware>();
 
 // CORS policy application
 app.UseCors("AllowReactApp");
+
+app.MapRazorPages();
 
 app.UseSwagger();  
 app.UseSwaggerUI();  // Swagger UI for API documentation
@@ -81,6 +56,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.AddMovieEndpoints();
 
 app.AddAccountStoredProcedureEndpoints();
 

@@ -18,29 +18,99 @@ public static class AccountsStoredProcedureModule
                 return Results.Ok();
             });*/
             
-            // Create Account using Stored Procedure
+            /*// Create Account using Stored Procedure
             app.MapPost("/stored-procedure-create-account", async ([FromBody] CreateAccountRequest createAccountRequest,
                 [FromServices] AppDbcontext dbContext,
                 [FromServices] ApiKeyService apiKeyService) =>
             {
                 // Execute the stored procedure to create the account
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
-            
-                // Retrieve the newly created account's AccountId (assuming it’s auto-generated)
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
+
+                // Fetch the account by email directly
                 var account = await dbContext.Accounts
                     .FirstOrDefaultAsync(a => a.Email == createAccountRequest.Email);
-            
+
                 if (account != null)
                 {
-                    // Generate and store the API key using the stored procedure
+                    // Map the account to a DTO
+                    var accountDto = new AccountDto
+                    {
+                        Account_Id = account.Account_Id,
+                        Email = account.Email,
+                        Payment_Method = account.Payment_Method,
+                        Blocked = account.Blocked,
+                        Is_Invited = account.Is_Invited,
+                        Trial_End_Date = account.Trial_End_Date
+                    };
+
+                    // Generate and store the API key
                     var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
-            
-                    // Return the account and the API key
-                    return Results.Ok(new { Account = account, ApiKey = apiKey });
+
+                    // Return the account DTO and generated API key
+                    return Results.Ok(new { Account = accountDto, ApiKey = apiKey });
                 }
-            
+
+                // Return failure response if account creation or retrieval failed
                 return Results.BadRequest("Account creation failed.");
+            });*/
+            
+            
+            // 2. Modified Account Creation Endpoint
+            app.MapPost("/stored-procedure-create-account", async ([FromBody] CreateAccountRequest createAccountRequest,
+                [FromServices] AppDbcontext dbContext,
+                [FromServices] ApiKeyService apiKeyService) =>
+            {
+                try
+                {
+                    // Step 1: Create account using stored procedure
+                    await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                        $"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
+
+                    // Step 2: Wait a small moment to ensure the account is created
+                    await Task.Delay(100);
+
+                    // Step 3: Fetch the newly created account using direct SELECT
+                    var account = await dbContext.Accounts
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(a => a.Email == createAccountRequest.Email);
+
+                    if (account == null)
+                    {
+                        return Results.BadRequest("Account creation failed or account could not be retrieved.");
+                    }
+
+                    // Step 4: Generate API key using stored procedure
+                    var apiKey = await apiKeyService.CreateApiKeyAsync(account.Account_Id);
+        
+                    if (string.IsNullOrEmpty(apiKey))
+                    {
+                        return Results.BadRequest("Failed to generate API key.");
+                    }
+
+                    // Step 5: Return the response
+                    var response = new
+                    {
+                        Account = new
+                        {
+                            account.Account_Id,
+                            account.Email,
+                            account.Payment_Method,
+                            account.Blocked,
+                            account.Is_Invited,
+                            account.Trial_End_Date
+                        },
+                        ApiKey = apiKey
+                    };
+
+                    return Results.Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Failed to create account: {ex.Message}");
+                }
             });
+
             
             // Update Account
             app.MapPut("/stored-procedure-update-account-by-id", async ([FromBody] UpdateAccountRequest updateAccountRequest,

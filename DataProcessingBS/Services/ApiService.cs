@@ -2,7 +2,9 @@ using DataProcessingBS.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using DataProcessingBS.Contracts;
 using DataProcessingBS.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DataProcessingBS.Services
 {
@@ -16,32 +18,65 @@ namespace DataProcessingBS.Services
             _context = context;
             _configuration = configuration;
         }
-        
+
         public async Task<string> CreateApiKeyAsync(int accountId)
         {
-            // Call the stored procedure to generate and store the API key
-            var apiKey = await _context.ApiKeys
-                .FromSqlInterpolated($"EXEC CreateApiKey @accountId={accountId}")
-                .Select(a => a.Key)  // Select only the generated API key
-                .FirstOrDefaultAsync();
+            // Execute stored procedure to create API key and return the generated key
+            using var command = _context.Database.GetDbConnection().CreateCommand();
+            command.CommandText = "EXEC CreateApiKey @accountId";
+            command.CommandType = System.Data.CommandType.Text;
 
-            return apiKey;  // Return the generated API key
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@accountId";
+            parameter.Value = accountId;
+            command.Parameters.Add(parameter);
+
+            await _context.Database.OpenConnectionAsync();
+
+            try
+            {
+                using var result = await command.ExecuteReaderAsync();
+                if (await result.ReadAsync())
+                {
+                    return result.GetString(0); // Assuming the stored procedure returns the API key in the first column
+                }
+
+                return null;
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
         }
 
         public async Task<bool> IsApiKeyValidAsync(string apiKey)
-        { 
-            var apiKeyEntity = await _context.ApiKeys
-                .FromSqlRaw("EXEC GetApiKeyByKey @p0", apiKey)
-                .ToListAsync(); 
-
-            // Check if the entity is valid and the key is active
-            return apiKeyEntity.FirstOrDefault()?.Is_Active == true;;
-        }
-        
-        // Helper method to validate IsActive
-        private bool IsApiKeyActive(string isActive)
         {
-            return isActive.Equals("yes", StringComparison.OrdinalIgnoreCase);
+            // Execute stored procedure to validate API key
+            using var command = _context.Database.GetDbConnection().CreateCommand();
+            command.CommandText = "EXEC ValidateApiKey @apiKey";
+            command.CommandType = System.Data.CommandType.Text;
+
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@apiKey";
+            parameter.Value = apiKey;
+            command.Parameters.Add(parameter);
+
+            await _context.Database.OpenConnectionAsync();
+
+            try
+            {
+                using var result = await command.ExecuteReaderAsync();
+                if (await result.ReadAsync())
+                {
+                    return result.GetBoolean(0); // Assuming the stored procedure returns a bit indicating validity
+                }
+
+                return false;
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
         }
     }
 }
