@@ -58,6 +58,9 @@ app.UseAuthorization();
 app.MapControllers();
 app.AddMovieEndpoints();
 
+app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();
+app.AddEpisodeStoredProcedureEndpoints();
+app.AddMediaStoredProcedureEndpoints();
 
 app.Run();

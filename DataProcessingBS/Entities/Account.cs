@@ -16,6 +16,6 @@ public class Account
     public bool? Is_Invited { get; set; }
     public DateOnly? Trial_End_Date { get; set; }
     
-    public ICollection<Profile>? Profiles { get; set; } 
+    public List<Profile>? Profiles { get; set; } 
 
 }

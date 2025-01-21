@@ -1,12 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+namespace DataProcessingBS.Contracts;
 
-namespace DataProcessingBS.Entities;
-
-public class Media
+public class MediaDto
 {
-    [Key]
     public int Media_Id { get; set; }
-    
     public int Genre_Id { get; set; }
     public string Title { get; set; }
     public string? Age_Rating { get; set; }

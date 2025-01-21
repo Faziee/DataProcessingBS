@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataProcessingBS.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    [Migration("20250118224602_GetApiKeyStoredProcedure")]
-    partial class GetApiKeyStoredProcedure
+    [Migration("20250121134126_AddNewCreateMediaStoredProcedures")]
+    partial class AddNewCreateMediaStoredProcedures
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

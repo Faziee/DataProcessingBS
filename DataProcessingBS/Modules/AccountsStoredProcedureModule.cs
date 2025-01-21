@@ -169,12 +169,31 @@ public static class AccountsStoredProcedureModule
                     : Results.Ok(accountDto);
             });
             
-            // Stored Procedure for Deleting Account
-            app.MapDelete("/stored-procedure-delete-account", async (int accountId,[FromServices] AppDbcontext dbContext) =>
+            // Delete Episode and Media if no other Episodes are using it
+            app.MapDelete("/stored-procedure-delete-episode/{episodeId}", async (int episodeId, [FromServices] AppDbcontext dbContext) =>
             {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteAccountById @accountId={accountId}");
+                // Get the Media_Id associated with the episode
+                var mediaId = await dbContext.Episodes
+                    .Where(e => e.Episode_Id == episodeId)
+                    .Select(e => e.Media_Id)
+                    .FirstOrDefaultAsync();
+
+                // Delete the episode using the stored procedure
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEpisodeById @Episode_Id={episodeId}");
+
+                // Check if any other episodes are referencing the same media
+                var isMediaUsedByOtherEpisodes = await dbContext.Episodes
+                    .AnyAsync(e => e.Media_Id == mediaId && e.Episode_Id != episodeId);
+
+                // If no other episodes are using this media, delete it
+                if (!isMediaUsedByOtherEpisodes)
+                {
+                    await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
+                }
+
                 return Results.Ok();
             });
+
         }
     }
 
