@@ -87,3 +87,37 @@ login-form input::placeholder{
     cursor: pointer;
 }
 
+.payment-method select {
+    width: 100%;
+    height: 50px;
+    background: #333;
+    color: white;
+    margin: 12px 0;
+    border: 0;
+    outline: 0;
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    appearance: none; /* Removes the default dropdown arrow for better styling */
+    background-image: linear-gradient(45deg, transparent 50%, white 50%),
+    linear-gradient(135deg, white 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1.2em), calc(100% - 15px) calc(1.2em);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.payment-method select:hover {
+    background-color: #444; /* Slightly lighter on hover */
+}
+
+.payment-method label {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+

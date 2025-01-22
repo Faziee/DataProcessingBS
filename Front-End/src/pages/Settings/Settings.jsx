@@ -1,51 +1,41 @@
-import React, { useState } from 'react';
+// Modified Settings.jsx
+import React, { useState, useEffect } from 'react';
 import './Settings.css';
-import Navbar from './Navbar'; // Assuming you have a Navbar component
+import NavBar from '../../components/Navbar/Navbar';
 
-const Settings = ({ user, updateUser }) => {
-    const [formData, setFormData] = useState({
-        email: user?.email || '',
-        password: '',
-    });
+const Settings = () => {
+    const [account, setAccount] = useState(null);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        updateUser(formData);
-    };
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('user'));
+        setAccount(userData);
+    }, []);
 
     return (
-        <>
-            <Navbar />
-            <div className="settings-container">
-                <h1>Account Settings</h1>
-                <form className="settings-form" onSubmit={handleSubmit}>
-                    <div className="form-field">
+        <div className="account-page">
+            <NavBar />
+            <div className="account-container">
+                <h1>Account Information</h1>
+                <div className="info-section">
+                    <div className="info-field">
                         <label>Email:</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                        />
+                        <p>{account?.email || 'N/A'}</p>
                     </div>
-                    <div className="form-field">
-                        <label>New Password:</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                        />
+                    <div className="info-field">
+                        <label>Payment Method:</label>
+                        <p>{account?.payment_Method || 'N/A'}</p>
                     </div>
-                    <button type="submit">Update Account</button>
-                </form>
+                    <div className="info-field">
+                        <label>Trial End Date:</label>
+                        <p>{account?.trial_End_Date || 'N/A'}</p>
+                    </div>
+                    <div className="info-field">
+                        <label>API Key:</label>
+                        <p>{localStorage.getItem('apiKey') || 'N/A'}</p>
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     );
 };
 

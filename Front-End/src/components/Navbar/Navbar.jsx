@@ -45,7 +45,8 @@ const Navbar = () => {
                     <img src={profile_img} alt='bell icon' className='profile'/>
                     <img src={dropdown_icon} alt='bell icon' />
                     <div className='dropdown'>
-                        <p><Link to="/account" className='no-decoration'>Account</Link></p>
+                        <p><Link to="/API" className='no-decoration'>API</Link></p>
+                        <p>Settings</p>
                         <p style={{textDecoration: 'underline'}}>Sign out</p>
                     </div>
                 </div>
