@@ -1,0 +1,42 @@
+.settings-container {
+    background: linear-gradient(180deg, #202020, #181818);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    margin: 150px auto 40px;
+    padding: 20px;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.settings-container h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #e50914;
+    text-align: center;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-field label {
+    color: #bbb;
+    font-size: 14px;
+}
+
+input {
+    padding: 10px;
+    background-color: #2c2c2c;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+}
