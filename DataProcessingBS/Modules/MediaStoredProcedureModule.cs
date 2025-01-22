@@ -9,12 +9,6 @@ public static class MediaStoredProcedureModule
 {
     public static void AddMediaStoredProcedureEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/stored-procedure-create-media", async ([FromBody] CreateMediaRequest createMediaRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC CreateMedia @GenreId={createMediaRequest.Genre_Id}, @Title={createMediaRequest.Title}, @AgeRating={createMediaRequest.Age_Rating}, @Quality={createMediaRequest.Quality}");
-            return Results.Ok();
-        });
-        
         app.MapPut("/stored-procedure-update-media-by-id", async ([FromBody] UpdateMediaRequest updateMediaRequest, [FromServices] AppDbcontext dbContext) =>
         {
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC UpdateMediaById @MediaId={updateMediaRequest.Media_Id}, @GenreId={updateMediaRequest.Genre_Id}, @Title={updateMediaRequest.Title}, @AgeRating={updateMediaRequest.Age_Rating}, @Quality={updateMediaRequest.Quality}");
@@ -44,12 +38,6 @@ public static class MediaStoredProcedureModule
             return media == null
                 ? Results.NotFound()
                 : Results.Ok(media);
-        });
-        
-        app.MapDelete("/stored-procedure-delete-media/{mediaId}", async (int mediaId, [FromServices] AppDbcontext dbContext) =>
-        {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
-            return Results.Ok();
         });
     }
 }

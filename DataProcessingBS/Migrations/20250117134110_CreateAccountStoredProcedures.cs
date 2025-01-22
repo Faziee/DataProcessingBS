@@ -15,13 +15,13 @@ namespace DataProcessingBS.Migrations
             @Email NVARCHAR(MAX),
             @Password NVARCHAR(MAX),
             @Payment_Method NVARCHAR(MAX),
-            @Blocked BIT NOT NULL,
-            @Is_Invited BIT NOT NULL,
-            @TrialEndDate DATETIME2
+            @Blocked BIT NULL,
+            @Is_Invited BIT NULL,
+            @Trial_End_Date DATETIME2
         AS
         BEGIN
             INSERT INTO Accounts (Email, Password, Payment_Method, Blocked, Is_Invited, Trial_End_Date)
-            VALUES (@Email, @Password, @PaymentMethod, @Blocked, @IsInvited, @TrialEndDate)
+            VALUES (@Email, @Password, @Payment_Method, @Blocked, @Is_Invited, @Trial_End_Date)
         END
     ");
 

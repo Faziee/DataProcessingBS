@@ -26,6 +26,38 @@ public static class SeriesStoredProcedureModule
             var series = await dbContext.Series.FromSqlRaw("EXEC GetAllSeries").ToListAsync();
             return Results.Ok(series);
         });
+        
+        
+        app.MapGet("/stored-procedure-get-episodes-by-series-id/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
+        {
+            // Get series details
+            var series = dbContext.Series
+                .FromSqlInterpolated($"EXEC GetSeriesById @SeriesId={seriesId}")
+                .AsEnumerable()
+                .FirstOrDefault();
+
+            if (series == null)
+            {
+                return Results.NotFound(new { message = "Series not found." });
+            }
+
+            // Get episodes by series ID using SqlQuery
+            var episodes = dbContext.Database
+                .SqlQuery<EpisodeWithSeriesTitleDto>($"EXEC GetEpisodesBySeriesId @Series_Id={seriesId}")
+                .ToList();
+
+            if (!episodes.Any())
+            {
+                return Results.NotFound(new { message = "No episodes found for the given series." });
+            }
+
+            return Results.Ok(new
+            {
+                SeriesTitle = series.Title,
+                Episodes = episodes
+            });
+        });
+
 
         app.MapGet("/stored-procedure-get-series-by-id/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
         {
@@ -47,8 +79,19 @@ public static class SeriesStoredProcedureModule
 
         app.MapDelete("/stored-procedure-delete-series/{seriesId}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
         {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteSeriesById @SeriesId={seriesId}");
-            return Results.Ok();
+            try
+            {
+                // Call the stored procedure to delete the series and its related episodes
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
+                    EXEC DeleteSeriesWithEpisodes @SeriesId={seriesId}");
+        
+                return Results.Ok(new { Message = "Series and related episodes deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(new { Message = $"An error occurred: {ex.Message}" }, statusCode: 500);
+            }
         });
+
     }
 }

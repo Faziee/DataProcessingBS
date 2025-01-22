@@ -65,7 +65,7 @@ public static class AccountsStoredProcedureModule
                 {
                     // Step 1: Create account using stored procedure
                     await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                        $"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @paymentMethod={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @isInvited={createAccountRequest.Is_Invited}, @trialEndDate={createAccountRequest.Trial_End_Date}");
+                        $"EXEC CreateAccount @email={createAccountRequest.Email}, @password={createAccountRequest.Password}, @Payment_Method={createAccountRequest.Payment_Method}, @blocked={createAccountRequest.Blocked}, @is_Invited={createAccountRequest.Is_Invited}, @trial_End_Date={createAccountRequest.Trial_End_Date}");
 
                     // Step 2: Wait a small moment to ensure the account is created
                     await Task.Delay(100);
@@ -169,28 +169,10 @@ public static class AccountsStoredProcedureModule
                     : Results.Ok(accountDto);
             });
             
-            // Delete Episode and Media if no other Episodes are using it
-            app.MapDelete("/stored-procedure-delete-episode/{episodeId}", async (int episodeId, [FromServices] AppDbcontext dbContext) =>
+            //aciddntly removed delet get itfrom soemhwere else 
+            app.MapDelete("/stored-procedure-delete-account/{accountId}", async (int accountId, [FromServices] AppDbcontext dbContext) =>
             {
-                // Get the Media_Id associated with the episode
-                var mediaId = await dbContext.Episodes
-                    .Where(e => e.Episode_Id == episodeId)
-                    .Select(e => e.Media_Id)
-                    .FirstOrDefaultAsync();
-
-                // Delete the episode using the stored procedure
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEpisodeById @Episode_Id={episodeId}");
-
-                // Check if any other episodes are referencing the same media
-                var isMediaUsedByOtherEpisodes = await dbContext.Episodes
-                    .AnyAsync(e => e.Media_Id == mediaId && e.Episode_Id != episodeId);
-
-                // If no other episodes are using this media, delete it
-                if (!isMediaUsedByOtherEpisodes)
-                {
-                    await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
-                }
-
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteAccountById @SeriesId={accountId}");
                 return Results.Ok();
             });
 

@@ -51,7 +51,20 @@ public static class SeriesModule
             var series = await dbContext.Series.ToListAsync();
             return Results.Ok(series);
         });
+        
+        // Get Episodes by Series_Id
+        app.MapGet("/series/{seriesId:int}/episodes", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var episodes = await dbContext.Episodes
+                .FromSqlRaw("EXEC GetEpisodesBySeriesId @SeriesId={0}", seriesId)
+                .ToListAsync();
 
+            return episodes.Count == 0
+                ? Results.NotFound(new { Message = "No episodes found for the given series." })
+                : Results.Ok(episodes);
+        });
+
+        
         // Get Series by Series_Id
         app.MapGet("/series/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
         {

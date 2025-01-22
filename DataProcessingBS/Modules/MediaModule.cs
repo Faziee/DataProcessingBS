@@ -10,21 +10,7 @@ public static class MediaModule
 {
     public static void AddMediaEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/media", async ([FromBody] CreateMediaRequest createMediaRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            var media = new Media()
-            {
-                Genre_Id = createMediaRequest.Genre_Id,
-                Title = createMediaRequest.Title,
-                Age_Rating = createMediaRequest.Age_Rating,
-                Quality = createMediaRequest.Quality
-            };
-
-            await dbContext.Media.AddAsync(media);
-            await dbContext.SaveChangesAsync();
-            return Results.Ok(media);
-        });
-        
+        // Media can not exist on it's own so it can not be created or deleted independently either! 
         app.MapPut("/media/{mediaId}", async (int mediaId, [FromBody] UpdateMediaRequest updateMediaRequest, [FromServices] AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media.FirstOrDefaultAsync(x => x.Media_Id == mediaId);
@@ -59,22 +45,6 @@ public static class MediaModule
             return media == null
                 ? Results.NotFound()
                 : Results.Ok(media);
-        });
-        
-        app.MapDelete("/media/{mediaId}", async (int mediaId, AppDbcontext dbContext) =>
-        {
-            var media = await dbContext.Media.FirstOrDefaultAsync(x => x.Media_Id == mediaId);
-
-            if (media != null)
-            {
-                dbContext.Media.Remove(media);
-                await dbContext.SaveChangesAsync();
-                return Results.Ok();
-            }
-            else
-            {
-                return Results.NotFound();
-            }
         });
     }
 }
