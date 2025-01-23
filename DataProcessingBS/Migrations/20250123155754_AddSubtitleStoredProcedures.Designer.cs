@@ -4,6 +4,7 @@ using DataProcessingBS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataProcessingBS.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20250123155754_AddSubtitleStoredProcedures")]
+    partial class AddSubtitleStoredProcedures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,24 +24,6 @@ namespace DataProcessingBS.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DataProcessingBS.Contracts.MovieWithMediaTitleDto", b =>
-                {
-                    b.Property<bool?>("Has_Subtitles")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Media_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Movie_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("MovieWithMediaTitleDto");
-                });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Account", b =>
                 {

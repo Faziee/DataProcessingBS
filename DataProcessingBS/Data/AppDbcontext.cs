@@ -1,3 +1,4 @@
+using DataProcessingBS.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using DataProcessingBS.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,9 @@ public class AppDbcontext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<MovieWithMediaTitleDto>().HasNoKey();
+
         
         // Define relationship between Account and Profile
         modelBuilder.Entity<Profile>()

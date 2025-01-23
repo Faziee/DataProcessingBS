@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using DataProcessingBS.Data;
 using DataProcessingBS.Middleware;
 using DataProcessingBS.Services;
@@ -59,6 +60,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//app.AddExternalMovieEndpoints();
+
+app.AddSubtitlesStoredProcedureEndpoints();
 app.AddMoviesStoredProcedureEndpoints();
 app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();

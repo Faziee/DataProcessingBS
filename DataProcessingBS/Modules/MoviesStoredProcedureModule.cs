@@ -10,8 +10,8 @@ public static class MoviesStoredProcedureModule
 {
     public static void AddMoviesStoredProcedureEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/stored-procedure-create-movie", async ([FromBody] CreateMovieRequest createMovieRequest, 
-                    [FromServices] AppDbcontext dbContext) =>
+        app.MapPost("/stored-procedure-create-movie", async ([FromBody] CreateMovieRequest createMovieRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             // Step 1: Create the Media using the CreateNewMedia stored procedure
             var mediaIdParameter = new SqlParameter
@@ -40,63 +40,43 @@ public static class MoviesStoredProcedureModule
             return Results.Ok(new { Message = "Movie created successfully" });
         });
 
-        app.MapPut("/stored-procedure-update-movie-by-id", async ([FromBody] UpdateMovieRequest updateMovieRequest, [FromServices] AppDbcontext dbContext) =>
+        app.MapPut("/stored-procedure-update-movie-by-id",
+            async ([FromBody] UpdateMovieRequest updateMovieRequest, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC UpdateMovieById @MovieId={updateMovieRequest.Movie_Id}, @HasSubtitles={updateMovieRequest.Has_Subtitles}");
+                return Results.Ok();
+            });
+        
+        
+        app.MapGet("/stored-procedure-get-movies", async (AppDbcontext dbContext) =>
         {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC UpdateMovieById @MovieId={updateMovieRequest.Movie_Id}, @HasSubtitles={updateMovieRequest.Has_Subtitles}");
-            return Results.Ok();
-        });
+            var movies = await dbContext.Set<MovieWithMediaTitleDto>()
+                .FromSqlRaw("EXEC GetAllMovies")
+                .ToListAsync();
 
-
-        /*// Get Episodes using Stored Procedure
-        app.MapGet("/stored-procedure-get-moviess", async (AppDbcontext dbContext) =>
-        {
-            var movies = await dbContext.Movies.FromSqlRaw("EXEC GetAllMovies").ToListAsync();
             return Results.Ok(movies);
-        });*/
-        
-        /*app.MapGet("/stored-procedure-get-movies", async (AppDbcontext dbContext, ILogger<Program> logger) =>
-        {
-            try
-            {
-                // Fetch the movies using the stored procedure
-                var moviesFromProcedure = await dbContext
-                    .Movies
-                    .FromSqlRaw("EXEC GetAllMovies")  // Your stored procedure call
-                    .Select(m => new MovieFromProcedureDto
-                    {
-                        Movie_Id = m.Movie_Id,
-                        Media_Id = m.Media_Id,  // Map the column to your new DTO property
-                        Has_Subtitles = m.Has_Subtitles,
-                        Title = m.Media.Title  // Assuming you have the proper navigation
-                    })
-                    .ToListAsync();
-
-                return Results.Ok(moviesFromProcedure);
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, "An error occurred while processing the request");
-                return Results.Problem("An error occurred while processing your request. Please check server logs for more details.");
-            }
-        });*/
-        
-
-        app.MapGet("/stored-procedure-get-movie-by-id/{movieId:int}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var movie = await dbContext.Movies
-                .FromSqlInterpolated($"EXEC GetMovieById @MovieId={movieId}")
-                .ToListAsync()
-                .ContinueWith(task => task.Result.Select(m => new MovieDto
-                {
-                    Movie_Id = m.Movie_Id,
-                    Media_Id = m.Media_Id,
-                    Has_Subtitles = m.Has_Subtitles
-                }).FirstOrDefault());
-
-            return movie == null
-                ? Results.NotFound()
-                : Results.Ok(movie);
         });
+
+        
+
+        app.MapGet("/stored-procedure-get-movie-by-id/{id:int}", async (AppDbcontext dbContext, int id) =>
+        {
+            var movies = await dbContext.Set<MovieWithMediaTitleDto>()
+                .FromSqlRaw("EXEC GetMovieById @MovieId = {0}", id)
+                .ToListAsync();
+
+            var movie = movies.FirstOrDefault();
+
+            if (movie == null)
+            {
+                return Results.NotFound(new { Message = $"Movie with ID {id} not found." });
+            }
+
+            return Results.Ok(movie);
+        });
+
+
 
         app.MapDelete("/stored-procedure-delete-movie/{movieId}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
         {

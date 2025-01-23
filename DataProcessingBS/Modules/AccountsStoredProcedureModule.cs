@@ -173,10 +173,9 @@ public static class AccountsStoredProcedureModule
                     : Results.Ok(accountDto);
             });
             
-            //aciddntly removed delet get itfrom soemhwere else 
-            app.MapDelete("/stored-procedure-delete-account/{accountId}", async (int accountId, [FromServices] AppDbcontext dbContext) =>
+            app.MapDelete("/stored-procedure-delete-account", async (int accountId,[FromServices] AppDbcontext dbContext) =>
             {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteAccountById @SeriesId={accountId}");
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteAccountById @accountId={accountId}");
                 return Results.Ok();
             });
 
