@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using DataProcessingBS.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddControllers().AddXmlSerializerFormatters();  // Allows XML responses alongside JSON
 builder.Services.AddEndpointsApiExplorer();
@@ -42,7 +43,7 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 var app = builder.Build();
 
 // Middleware configuration, commented out since Api Key authentication is not fully implemented yet
-app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<ApiKeyMiddleware>();
 
 // CORS policy application
 app.UseCors("AllowReactApp");
@@ -56,8 +57,11 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.AddMovieEndpoints();
+app.AddExternalMovieEndpoints();
 
+//app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();
+//app.AddEpisodeStoredProcedureEndpoints();
+//app.AddMediaStoredProcedureEndpoints();
 
 app.Run();

@@ -3,47 +3,61 @@ namespace DataProcessingBS.Services
 {
     public class TmdbService
     {
-        private readonly string _tmdbApiKey;
+        private readonly string _tmdbApiKey; 
         private readonly HttpClient _httpClient;
+
         // Constructor with HttpClient dependency injection
         public TmdbService(IConfiguration configuration, HttpClient httpClient)
         {
-           _tmdbApiKey = configuration["TMDB_API_KEY"];
+            _tmdbApiKey = configuration["TMDB_API_KEY"]; // Note the colon, not asterisk
             _httpClient = httpClient;
         }
+
         public async Task<List<Movie>> GetMoviesAsync(string category)
         {
-            // Construct the TMDB API URL using the category (e.g., 'now_playing', 'popular', etc.)
             var url = $"https://api.themoviedb.org/3/movie/{category}?api_key={_tmdbApiKey}&language=en-US&page=1";
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            
+            try 
             {
+                var response = await _httpClient.GetAsync(url);
                 var content = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JObject.Parse(content);
-                var movies = jsonResponse["results"];
-                var movieList = new List<Movie>();
-                foreach (var movie in movies)
+    
+                Console.WriteLine($"TMDB API Response: {content}");
+    
+                if (!response.IsSuccessStatusCode)
                 {
-                    var title = movie["title"]?.ToString();
-                    var originalTitle = movie["original_title"]?.ToString();
-                    var backdropPath = movie["backdrop_path"]?.ToString();
-                    var overview = movie["overview"]?.ToString();
-                    var posterUrl = backdropPath != null ? $"https://image.tmdb.org/t/p/w500{backdropPath}" : "";
-                    movieList.Add(new Movie
-                    {
-                        Title = title,
-                        OriginalTitle = originalTitle,
-                        BackdropPath = backdropPath,
-                        Overview = overview,
-                        PosterUrl = posterUrl
-                    });
+                    Console.WriteLine($"API call failed with status: {response.StatusCode}");
+                    return new List<Movie>();
                 }
-                return movieList;
+    
+                var jsonResponse = JObject.Parse(content);
+                var movies = jsonResponse["results"] as JArray;
+    
+                if (movies == null || !movies.Any())
+                {
+                    Console.WriteLine("No movies found in the response");
+                    return new List<Movie>();
+                }
+    
+                return movies.Select(movie => new Movie
+                {
+                    Title = movie["title"]?.ToString(),
+                    OriginalTitle = movie["original_title"]?.ToString(),
+                    BackdropPath = movie["backdrop_path"]?.ToString(),
+                    Overview = movie["overview"]?.ToString(),
+                    PosterUrl = movie["backdrop_path"] != null 
+                        ? $"https://image.tmdb.org/t/p/w500{movie["backdrop_path"]}"
+                        : ""
+                }).ToList();
             }
-            return new List<Movie>();  // Return an empty list if TMDB API call fails
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return new List<Movie>();
+            }
         }
     }
-    // Movie model to hold the necessary data
+
     public class Movie
     {
         public string Title { get; set; }
