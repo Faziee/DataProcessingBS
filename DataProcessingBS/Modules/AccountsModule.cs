@@ -69,9 +69,6 @@ namespace DataProcessingBS.Modules
                     account.Email = updateAccountRequest.Email;
                     account.Password = updateAccountRequest.Password;
                     account.Payment_Method = updateAccountRequest.Payment_Method;
-                    account.Blocked = updateAccountRequest.Blocked;
-                    account.Is_Invited = updateAccountRequest.Is_Invited;
-                    account.Trial_End_Date = updateAccountRequest.Trial_End_Date;
 
                     // Save changes to the database
                     await dbContext.SaveChangesAsync();

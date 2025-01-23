@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataProcessingBS.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    [Migration("20250118213129_GetAccountByEmailSlayJOJOStoredProcedure")]
-    partial class GetAccountByEmailSlayJOJOStoredProcedure
+    [Migration("20250122162917_AddMovieStoredProcedures")]
+    partial class AddMovieStoredProcedures
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,9 +74,8 @@ namespace DataProcessingBS.Migrations
                     b.Property<DateTime>("Create_Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Is_Active")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool?>("Is_Active")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Key")
                         .IsRequired()
@@ -189,10 +188,8 @@ namespace DataProcessingBS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Movie_Id"));
 
-                    b.Property<string>("Has_Subtitles")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                    b.Property<bool?>("Has_Subtitles")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Media_Id")
                         .HasColumnType("int");
@@ -266,6 +263,9 @@ namespace DataProcessingBS.Migrations
                     b.Property<int>("Account_Id")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Account_Id1")
+                        .HasColumnType("int");
+
                     b.Property<DateOnly>("Renewal_Date")
                         .HasColumnType("date");
 
@@ -280,7 +280,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Subscription_Id");
 
-                    b.HasIndex("Account_Id");
+                    b.HasIndex("Account_Id1");
 
                     b.ToTable("Subscriptions");
                 });
@@ -370,10 +370,8 @@ namespace DataProcessingBS.Migrations
             modelBuilder.Entity("DataProcessingBS.Entities.Subscription", b =>
                 {
                     b.HasOne("DataProcessingBS.Entities.Account", "Account")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("Account_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("Account_Id1");
 
                     b.Navigation("Account");
                 });
@@ -381,8 +379,6 @@ namespace DataProcessingBS.Migrations
             modelBuilder.Entity("DataProcessingBS.Entities.Account", b =>
                 {
                     b.Navigation("Profiles");
-
-                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }

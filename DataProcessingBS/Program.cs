@@ -15,6 +15,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ApiKeyService>();
 
+builder.Services.AddLogging();
+
 builder.Services.AddSwaggerGen();
 
 // CORS setup for React app, will be used eventually to connect our front end
@@ -56,11 +58,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.AddMovieEndpoints();
 
+app.AddMoviesStoredProcedureEndpoints();
 app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();
 app.AddEpisodeStoredProcedureEndpoints();
 app.AddMediaStoredProcedureEndpoints();
+
 
 app.Run();

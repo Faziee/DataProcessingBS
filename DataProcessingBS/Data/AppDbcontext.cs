@@ -29,12 +29,19 @@ public class AppDbcontext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
         // Define relationship between Account and Profile
         modelBuilder.Entity<Profile>()
             .HasOne(p => p.Account)  // Profile has one Account
             .WithMany(a => a.Profiles) // Account can have many Profiles
             .HasForeignKey(p => p.Account_Id); // Account_Id is the foreign key in Profile
+    }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .EnableSensitiveDataLogging()  // Useful for debugging purposes
+            .LogTo(Console.WriteLine, LogLevel.Information);  // Log SQL queries to console
     }
 
 }

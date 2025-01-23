@@ -4,6 +4,7 @@ using DataProcessingBS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataProcessingBS.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20250122223032_NewUpdateGetAllMoviesStoredProcedure")]
+    partial class NewUpdateGetAllMoviesStoredProcedure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Account_Id");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.ApiKey", b =>
@@ -80,7 +83,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("ApiKey_Id");
 
-                    b.ToTable("ApiKeys", (string)null);
+                    b.ToTable("ApiKeys");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Episode", b =>
@@ -112,7 +115,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Episode_Id");
 
-                    b.ToTable("Episodes", (string)null);
+                    b.ToTable("Episodes");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Genre", b =>
@@ -129,7 +132,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Genre_Id");
 
-                    b.ToTable("Genres", (string)null);
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Invitation", b =>
@@ -148,7 +151,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Invitation_Id");
 
-                    b.ToTable("Invitations", (string)null);
+                    b.ToTable("Invitations");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Media", b =>
@@ -174,7 +177,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Media_Id");
 
-                    b.ToTable("Media", (string)null);
+                    b.ToTable("Media");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Movie", b =>
@@ -198,7 +201,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasIndex("Media_Id1");
 
-                    b.ToTable("Movies", (string)null);
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Profile", b =>
@@ -228,7 +231,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasIndex("Account_Id");
 
-                    b.ToTable("Profiles", (string)null);
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Series", b =>
@@ -251,7 +254,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Series_Id");
 
-                    b.ToTable("Series", (string)null);
+                    b.ToTable("Series");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Subscription", b =>
@@ -284,7 +287,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasIndex("Account_Id1");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Subtitle", b =>
@@ -304,7 +307,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Subtitle_Id");
 
-                    b.ToTable("Subtitles", (string)null);
+                    b.ToTable("Subtitles");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Watch", b =>
@@ -333,7 +336,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("Watch_Id");
 
-                    b.ToTable("Watches", (string)null);
+                    b.ToTable("Watches");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.WatchList", b =>
@@ -355,7 +358,7 @@ namespace DataProcessingBS.Migrations
 
                     b.HasKey("WatchList_Id");
 
-                    b.ToTable("WatchLists", (string)null);
+                    b.ToTable("WatchLists");
                 });
 
             modelBuilder.Entity("DataProcessingBS.Entities.Movie", b =>

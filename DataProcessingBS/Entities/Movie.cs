@@ -9,4 +9,6 @@ public class Movie
     
     public int Media_Id { get; set; }
     public bool? Has_Subtitles { get; set; }
-}
+    
+    public Media Media { get; set; }
+}      

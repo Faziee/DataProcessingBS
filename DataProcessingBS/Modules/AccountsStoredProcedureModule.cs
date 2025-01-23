@@ -110,13 +110,15 @@ public static class AccountsStoredProcedureModule
                     return Results.BadRequest($"Failed to create account: {ex.Message}");
                 }
             });
+            
+            
 
             
             // Update Account
             app.MapPut("/stored-procedure-update-account-by-id", async ([FromBody] UpdateAccountRequest updateAccountRequest,
                 [FromServices] AppDbcontext dbContext) =>
             {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC UpdateAccountById @accountId={updateAccountRequest.Account_Id}, @email={updateAccountRequest.Email}, @password={updateAccountRequest.Password}, @paymentMethod={updateAccountRequest.Payment_Method}, @blocked={updateAccountRequest.Blocked}, @isInvited={updateAccountRequest.Is_Invited}, @trialEndDate={updateAccountRequest.Trial_End_Date}");
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC UpdateAccountById @accountId={updateAccountRequest.Account_Id}, @email={updateAccountRequest.Email}, @password={updateAccountRequest.Password}, @paymentMethod={updateAccountRequest.Payment_Method}");
                 return Results.Ok();
             });
 
@@ -137,6 +139,7 @@ public static class AccountsStoredProcedureModule
                     {
                         Account_Id = a.Account_Id,
                         Email = a.Email,
+                        Password = a.Password,
                         Payment_Method = a.Payment_Method,
                         Blocked = a.Blocked,
                         Is_Invited = a.Is_Invited,
@@ -158,6 +161,7 @@ public static class AccountsStoredProcedureModule
                     {
                         Account_Id = a.Account_Id,
                         Email = a.Email,
+                        Password = a.Password,
                         Payment_Method = a.Payment_Method,
                         Blocked = a.Blocked,
                         Is_Invited = a.Is_Invited,
