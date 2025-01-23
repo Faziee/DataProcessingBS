@@ -62,12 +62,15 @@ app.MapControllers();
 
 //app.AddExternalMovieEndpoints();
 
-app.AddSubtitlesStoredProcedureEndpoints();
+
 app.AddMoviesStoredProcedureEndpoints();
 app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();
 app.AddEpisodeStoredProcedureEndpoints();
 app.AddMediaStoredProcedureEndpoints();
+app.AddSubtitlesStoredProcedureEndpoints();
+
+app.UseDeveloperExceptionPage();
 
 
 app.Run();

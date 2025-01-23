@@ -42,17 +42,6 @@ public static class MoviesModule
             return Results.Ok(movie);
         });
 
-        app.MapGet("/stored-procedure-get-movie-by-id/{movieId:int}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var movie = await dbContext.Set<MovieWithMediaTitleDto>()
-                .FromSqlInterpolated($"EXEC GetMovieById @MovieId={movieId}")
-                .FirstOrDefaultAsync();
-
-            return movie == null
-                ? Results.NotFound()
-                : Results.Ok(movie);
-        });
-
 
         app.MapGet("/movies", async (AppDbcontext dbContext) =>
         {

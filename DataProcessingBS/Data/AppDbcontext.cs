@@ -31,7 +31,7 @@ public class AppDbcontext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        modelBuilder.Entity<MovieWithMediaTitleDto>().HasNoKey();
+        modelBuilder.Entity<MovieDto>().HasNoKey();
 
         
         // Define relationship between Account and Profile

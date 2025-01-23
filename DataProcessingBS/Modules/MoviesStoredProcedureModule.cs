@@ -51,7 +51,7 @@ public static class MoviesStoredProcedureModule
         
         app.MapGet("/stored-procedure-get-movies", async (AppDbcontext dbContext) =>
         {
-            var movies = await dbContext.Set<MovieWithMediaTitleDto>()
+            var movies = await dbContext.Set<MovieDto>()
                 .FromSqlRaw("EXEC GetAllMovies")
                 .ToListAsync();
 
@@ -59,10 +59,9 @@ public static class MoviesStoredProcedureModule
         });
 
         
-
         app.MapGet("/stored-procedure-get-movie-by-id/{id:int}", async (AppDbcontext dbContext, int id) =>
         {
-            var movies = await dbContext.Set<MovieWithMediaTitleDto>()
+            var movies = await dbContext.Set<MovieDto>()
                 .FromSqlRaw("EXEC GetMovieById @MovieId = {0}", id)
                 .ToListAsync();
 
