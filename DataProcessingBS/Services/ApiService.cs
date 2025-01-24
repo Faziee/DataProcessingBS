@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DataProcessingBS.Contracts;
 using DataProcessingBS.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace DataProcessingBS.Services
 {
@@ -77,6 +78,16 @@ namespace DataProcessingBS.Services
             {
                 await _context.Database.CloseConnectionAsync();
             }
+        }
+        
+        public static async Task UpdateApiKeyStatus(int apiKeyId, bool isActive, AppDbcontext dbContext)
+        {
+            // Define parameters for the stored procedure
+            var apiKeyIdParameter = new SqlParameter("@ApiKeyId", apiKeyId);
+            var isActiveParameter = new SqlParameter("@IsActive", isActive);
+
+            // Execute the stored procedure using ExecuteSqlRawAsync
+            await dbContext.Database.ExecuteSqlRawAsync("EXEC UpdateApiKeyStatus @ApiKeyId, @IsActive", apiKeyIdParameter, isActiveParameter);
         }
     }
 }

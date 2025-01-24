@@ -30,7 +30,6 @@ public static class SeriesStoredProcedureModule
         
         app.MapGet("/stored-procedure-get-episodes-by-series-id/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
         {
-            // Get series details
             var series = dbContext.Series
                 .FromSqlInterpolated($"EXEC GetSeriesById @SeriesId={seriesId}")
                 .AsEnumerable()
@@ -57,8 +56,7 @@ public static class SeriesStoredProcedureModule
                 Episodes = episodes
             });
         });
-
-
+        
         app.MapGet("/stored-procedure-get-series-by-id/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
         {
             var series = await dbContext.Series
@@ -81,7 +79,6 @@ public static class SeriesStoredProcedureModule
         {
             try
             {
-                // Call the stored procedure to delete the series and its related episodes
                 await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
                     EXEC DeleteSeriesWithEpisodes @SeriesId={seriesId}");
         

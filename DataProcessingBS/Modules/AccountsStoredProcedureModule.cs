@@ -111,9 +111,6 @@ public static class AccountsStoredProcedureModule
                 }
             });
             
-            
-
-            
             // Update Account
             app.MapPut("/stored-procedure-update-account-by-id", async ([FromBody] UpdateAccountRequest updateAccountRequest,
                 [FromServices] AppDbcontext dbContext) =>

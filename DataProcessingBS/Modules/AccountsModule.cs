@@ -87,34 +87,6 @@ namespace DataProcessingBS.Modules
                 return Results.Ok(accounts);  // Return 200 OK with the list of accounts
             });
             
-            // app.MapGet("/accounts/{accountId:int}", async (int accountId, [FromServices] AppDbcontext dbContext) =>
-            // {
-            //     // Fetch the account by ID
-            //     var account = await dbContext.Accounts
-            //         .FirstOrDefaultAsync(x => x.Account_Id == accountId);
-            //
-            //     // Check if the account is found
-            //     if (account == null)
-            //     {
-            //         return Results.NotFound();  // Return 404 if no account is found
-            //     }
-            //
-            //     // Return the account if found
-            //     return Results.Ok(account);  // Return 200 OK with the account details
-            // });
-            //
-            
-            /*// Get Account by Account_Id
-            app.MapGet("/accounts/{accountId:int}", async (int accountId, [FromServices] AppDbcontext dbContext) =>
-            {
-                var account = await dbContext.Accounts
-                    .FirstOrDefaultAsync(x => x.Account_Id == accountId);
-
-                return account == null
-                    ? Results.NotFound()
-                    : Results.Ok(account);
-            });*/
-            
             // Get Account by Account_Email
             app.MapGet("/accounts/{email}", async (string email, [FromServices] AppDbcontext dbContext) =>
             {

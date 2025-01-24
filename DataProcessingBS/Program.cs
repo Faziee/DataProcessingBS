@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5174")  
+        policy.WithOrigins("http://localhost:4200")  
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -44,11 +44,13 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 
 var app = builder.Build();
 
+
+app.UseCors("AllowReactApp");
+
 // Middleware configuration, commented out since Api Key authentication is not fully implemented yet
 app.UseMiddleware<ApiKeyMiddleware>();
 
 // CORS policy application
-app.UseCors("AllowReactApp");
 
 app.MapRazorPages();
 
@@ -62,13 +64,14 @@ app.MapControllers();
 
 //app.AddExternalMovieEndpoints();
 
-
+app.AddInvitationsStoredProcedureEndpoints();
 app.AddMoviesStoredProcedureEndpoints();
 app.AddSeriesStoredProcedureEndpoints();
 app.AddAccountStoredProcedureEndpoints();
 app.AddEpisodeStoredProcedureEndpoints();
 app.AddMediaStoredProcedureEndpoints();
 app.AddSubtitlesStoredProcedureEndpoints();
+app.AddGenresStoredProcedureEndpoints();
 
 app.UseDeveloperExceptionPage();
 
