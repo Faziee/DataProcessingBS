@@ -64,6 +64,8 @@ app.MapControllers();
 
 //app.AddExternalMovieEndpoints();
 
+app.AddWatchesStoredProcedureEndpoints();
+
 app.AddSubscriptionStoredProcedureEndpoints();
 app.AddProfileStoredProcedureEndpoints();
 app.AddInvitationsStoredProcedureEndpoints();

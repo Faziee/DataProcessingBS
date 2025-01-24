@@ -75,6 +75,24 @@ public static class MoviesStoredProcedureModule
             return Results.Ok(movie);
         });
 
+        app.MapGet("/stored-procedure-get-movies-by-genre/{genre}", async (string genre, AppDbcontext dbContext) =>
+        {
+            if (string.IsNullOrWhiteSpace(genre))
+            {
+                return Results.BadRequest(new { Message = "Genre cannot be empty." });
+            }
+
+            var movies = await dbContext.Set<MovieDto>()
+                .FromSqlInterpolated($"EXEC GetMoviesByGenre @GenreType = {genre}")
+                .ToListAsync();
+
+            if (!movies.Any())
+            {
+                return Results.NotFound(new { Message = $"No movies found for genre '{genre}'." });
+            }
+
+            return Results.Ok(movies);
+        });
 
 
         app.MapDelete("/stored-procedure-delete-movie/{movieId}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
