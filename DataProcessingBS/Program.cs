@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using DataProcessingBS.Data;
 using DataProcessingBS.Middleware;
 using DataProcessingBS.Services;
@@ -15,8 +14,6 @@ builder.Services.AddHttpClient<TmdbService>();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ApiKeyService>();
-
-builder.Services.AddLogging();
 
 builder.Services.AddSwaggerGen();
 
@@ -42,20 +39,19 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowReactApp");
-
 app.UseMiddleware<ApiKeyMiddleware>();
+
+app.UseCors("AllowReactApp");
 
 app.MapRazorPages();
 
 app.UseSwagger();  
-app.UseSwaggerUI();  
+app.UseSwaggerUI(); 
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.AddExternalMovieEndpoints();
 app.AddWatchesStoredProcedureEndpoints();
