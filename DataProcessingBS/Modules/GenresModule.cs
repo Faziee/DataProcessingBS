@@ -13,7 +13,7 @@ public static class GenresModule
         app.MapPost("/genre",
             async ([FromBody] CreateGenreRequest createGenreRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                var genre = new Genre()
+                var genre = new Genre
                 {
                     Type = createGenreRequest.Type
                 };
@@ -28,8 +28,9 @@ public static class GenresModule
             var genres = await dbContext.Genres.ToListAsync();
             return Results.Ok(genres);
         });
-        
-        app.MapPut("/genres/{genreId}", async (int genreId, [FromBody] UpdateGenreRequest updateGenreRequest, [FromServices] AppDbcontext dbContext) =>
+
+        app.MapPut("/genres/{genreId}", async (int genreId, [FromBody] UpdateGenreRequest updateGenreRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             var genre = await dbContext.Genres.FirstOrDefaultAsync(x => x.Genre_Id == genreId);
 
@@ -37,16 +38,14 @@ public static class GenresModule
             {
                 genre.Genre_Id = updateGenreRequest.Genre_Id;
                 genre.Type = updateGenreRequest.Type;
-                
+
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(genre);
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
-        
+
         app.MapDelete("/genres/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var genre = await dbContext.Genres.FirstOrDefaultAsync(s => s.Genre_Id == id);

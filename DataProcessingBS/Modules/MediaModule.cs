@@ -1,6 +1,5 @@
 using DataProcessingBS.Contracts;
 using DataProcessingBS.Data;
-using DataProcessingBS.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,8 @@ public static class MediaModule
 {
     public static void AddMediaEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPut("/media/{mediaId}", async (int mediaId, [FromBody] UpdateMediaRequest updateMediaRequest, [FromServices] AppDbcontext dbContext) =>
+        app.MapPut("/media/{mediaId}", async (int mediaId, [FromBody] UpdateMediaRequest updateMediaRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media.FirstOrDefaultAsync(x => x.Media_Id == mediaId);
 
@@ -24,18 +24,16 @@ public static class MediaModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(media);
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
-        
+
         app.MapGet("/media", async (AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media.ToListAsync();
             return Results.Ok(media);
         });
-        
+
         app.MapGet("/media/{mediaId:int}", async (int mediaId, [FromServices] AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media

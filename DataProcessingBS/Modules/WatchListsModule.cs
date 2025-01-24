@@ -35,7 +35,7 @@ public static class WatchListModule
             var watchList = await dbContext.WatchLists.FindAsync(watchListId);
             return watchList == null ? Results.NotFound() : Results.Ok(watchList);
         });
-        
+
         app.MapPut("/watchlists/{watchListId}", async (int watchListId,
             [FromBody] UpdateWatchListRequest updateWatchListRequest, [FromServices] AppDbcontext dbContext) =>
         {

@@ -13,7 +13,7 @@ public static class InvitationsModule
         app.MapPost("/invitations",
             async ([FromBody] CreateInvitationRequest createInvitationRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                var invitation = new Invitation()
+                var invitation = new Invitation
                 {
                     Inviter_Id = createInvitationRequest.Inviter_Id,
                     Invitee_Id = createInvitationRequest.Invitee_Id
@@ -29,32 +29,27 @@ public static class InvitationsModule
             var invitations = await dbContext.Invitations.ToListAsync();
             return Results.Ok(invitations);
         });
-        
-        app.MapPut("/invitations/{invitationId}", async (int invitationId, [FromBody] UpdateInvitationRequest updateInvitationRequest, [FromServices] AppDbcontext dbContext) =>
+
+        app.MapPut("/invitations/{invitationId}", async (int invitationId,
+            [FromBody] UpdateInvitationRequest updateInvitationRequest, [FromServices] AppDbcontext dbContext) =>
         {
             var invitation = await dbContext.Invitations.FirstOrDefaultAsync(x => x.Invitation_Id == invitationId);
 
             if (invitation != null)
             {
                 if (updateInvitationRequest.Inviter_Id.HasValue)
-                {
                     invitation.Inviter_Id = updateInvitationRequest.Inviter_Id.Value;
-                }
 
                 if (updateInvitationRequest.Invitee_Id.HasValue)
-                {
                     invitation.Invitee_Id = updateInvitationRequest.Invitee_Id.Value;
-                }
 
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(invitation);
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
-        
+
         app.MapDelete("/invitations/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var invitation = await dbContext.Invitations.FirstOrDefaultAsync(s => s.Invitation_Id == id);
@@ -68,6 +63,4 @@ public static class InvitationsModule
             return Results.Ok(new { Message = "Invitation deleted successfully." });
         });
     }
-
-
 }

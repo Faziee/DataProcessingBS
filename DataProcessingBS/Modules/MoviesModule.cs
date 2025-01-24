@@ -1,3 +1,4 @@
+using System.Data;
 using DataProcessingBS.Contracts;
 using DataProcessingBS.Data;
 using DataProcessingBS.Entities;
@@ -9,16 +10,17 @@ public static class MoviesModule
 {
     public static void AddMovieEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/movies", async ([FromBody] CreateMovieRequest createMovieRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            var mediaIdParameter = new SqlParameter()
+        app.MapPost("/movies",
+            async ([FromBody] CreateMovieRequest createMovieRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                ParameterName = "@MediaId",
-                SqlDbType = System.Data.SqlDbType.Int,
-                Direction = System.Data.ParameterDirection.Output
-            };
+                var mediaIdParameter = new SqlParameter
+                {
+                    ParameterName = "@MediaId",
+                    SqlDbType = SqlDbType.Int,
+                    Direction = ParameterDirection.Output
+                };
 
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
                 EXEC CreateNewMedia 
                 @GenreId={createMovieRequest.Genre_Id}, 
                 @Title={createMovieRequest.Title}, 
@@ -26,19 +28,19 @@ public static class MoviesModule
                 @Quality={createMovieRequest.Quality}, 
                 @MediaId={mediaIdParameter} OUTPUT");
 
-            int mediaId = (int)mediaIdParameter.Value;
+                var mediaId = (int)mediaIdParameter.Value;
 
-            var movie = new Movie
-            {
-                Media_Id = mediaId, 
-                Has_Subtitles = createMovieRequest.Has_Subtitles
-            };
+                var movie = new Movie
+                {
+                    Media_Id = mediaId,
+                    Has_Subtitles = createMovieRequest.Has_Subtitles
+                };
 
-            await dbContext.Movies.AddAsync(movie);
-            await dbContext.SaveChangesAsync();
+                await dbContext.Movies.AddAsync(movie);
+                await dbContext.SaveChangesAsync();
 
-            return Results.Ok(movie);
-        });
+                return Results.Ok(movie);
+            });
 
 
         app.MapGet("/movies", async (AppDbcontext dbContext) =>
@@ -70,10 +72,8 @@ public static class MoviesModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok();
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
     }
 }

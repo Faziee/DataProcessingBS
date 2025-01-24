@@ -1,93 +1,81 @@
-using DataProcessingBS.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using DataProcessingBS.Contracts;
+using System.Data;
 using DataProcessingBS.Data;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-namespace DataProcessingBS.Services
+namespace DataProcessingBS.Services;
+
+public class ApiKeyService
 {
-    public class ApiKeyService
+    private readonly IConfiguration _configuration;
+    private readonly AppDbcontext _context;
+
+    public ApiKeyService(AppDbcontext context, IConfiguration configuration)
     {
-        private readonly AppDbcontext _context;
-        private readonly IConfiguration _configuration;
+        _context = context;
+        _configuration = configuration;
+    }
 
-        public ApiKeyService(AppDbcontext context, IConfiguration configuration)
+    public async Task<string> CreateApiKeyAsync(int accountId)
+    {
+        using var command = _context.Database.GetDbConnection().CreateCommand();
+        command.CommandText = "EXEC CreateApiKey @accountId";
+        command.CommandType = CommandType.Text;
+
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@accountId";
+        parameter.Value = accountId;
+        command.Parameters.Add(parameter);
+
+        await _context.Database.OpenConnectionAsync();
+
+        try
         {
-            _context = context;
-            _configuration = configuration;
-        }
+            using var result = await command.ExecuteReaderAsync();
+            if (await result.ReadAsync())
+                return result.GetString(0); 
 
-        public async Task<string> CreateApiKeyAsync(int accountId)
+            return null;
+        }
+        finally
         {
-            // Execute stored procedure to create API key and return the generated key
-            using var command = _context.Database.GetDbConnection().CreateCommand();
-            command.CommandText = "EXEC CreateApiKey @accountId";
-            command.CommandType = System.Data.CommandType.Text;
-
-            var parameter = command.CreateParameter();
-            parameter.ParameterName = "@accountId";
-            parameter.Value = accountId;
-            command.Parameters.Add(parameter);
-
-            await _context.Database.OpenConnectionAsync();
-
-            try
-            {
-                using var result = await command.ExecuteReaderAsync();
-                if (await result.ReadAsync())
-                {
-                    return result.GetString(0); // Assuming the stored procedure returns the API key in the first column
-                }
-
-                return null;
-            }
-            finally
-            {
-                await _context.Database.CloseConnectionAsync();
-            }
+            await _context.Database.CloseConnectionAsync();
         }
+    }
 
-        public async Task<bool> IsApiKeyValidAsync(string apiKey)
+    public async Task<bool> IsApiKeyValidAsync(string apiKey)
+    {
+        using var command = _context.Database.GetDbConnection().CreateCommand();
+        command.CommandText = "EXEC ValidateApiKey @apiKey";
+        command.CommandType = CommandType.Text;
+
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@apiKey";
+        parameter.Value = apiKey;
+        command.Parameters.Add(parameter);
+
+        await _context.Database.OpenConnectionAsync();
+
+        try
         {
-            // Execute stored procedure to validate API key
-            using var command = _context.Database.GetDbConnection().CreateCommand();
-            command.CommandText = "EXEC ValidateApiKey @apiKey";
-            command.CommandType = System.Data.CommandType.Text;
+            using var result = await command.ExecuteReaderAsync();
+            if (await result.ReadAsync())
+                return result.GetBoolean(0);
 
-            var parameter = command.CreateParameter();
-            parameter.ParameterName = "@apiKey";
-            parameter.Value = apiKey;
-            command.Parameters.Add(parameter);
-
-            await _context.Database.OpenConnectionAsync();
-
-            try
-            {
-                using var result = await command.ExecuteReaderAsync();
-                if (await result.ReadAsync())
-                {
-                    return result.GetBoolean(0); // Assuming the stored procedure returns a bit indicating validity
-                }
-
-                return false;
-            }
-            finally
-            {
-                await _context.Database.CloseConnectionAsync();
-            }
+            return false;
         }
-        
-        public static async Task UpdateApiKeyStatus(int apiKeyId, bool isActive, AppDbcontext dbContext)
+        finally
         {
-            // Define parameters for the stored procedure
-            var apiKeyIdParameter = new SqlParameter("@ApiKeyId", apiKeyId);
-            var isActiveParameter = new SqlParameter("@IsActive", isActive);
-
-            // Execute the stored procedure using ExecuteSqlRawAsync
-            await dbContext.Database.ExecuteSqlRawAsync("EXEC UpdateApiKeyStatus @ApiKeyId, @IsActive", apiKeyIdParameter, isActiveParameter);
+            await _context.Database.CloseConnectionAsync();
         }
+    }
+
+    public static async Task UpdateApiKeyStatus(int apiKeyId, bool isActive, AppDbcontext dbContext)
+    {
+        var apiKeyIdParameter = new SqlParameter("@ApiKeyId", apiKeyId);
+        var isActiveParameter = new SqlParameter("@IsActive", isActive);
+
+        await dbContext.Database.ExecuteSqlRawAsync("EXEC UpdateApiKeyStatus @ApiKeyId, @IsActive", apiKeyIdParameter,
+            isActiveParameter);
     }
 }

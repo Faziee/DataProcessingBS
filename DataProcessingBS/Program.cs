@@ -1,12 +1,12 @@
 using DataProcessingBS.Data;
 using DataProcessingBS.Middleware;
+using DataProcessingBS.Modules;
 using DataProcessingBS.Services;
 using Microsoft.EntityFrameworkCore;
-using DataProcessingBS.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddXmlSerializerFormatters(); 
+builder.Services.AddControllers().AddXmlSerializerFormatters();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 
@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")  
+        policy.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -30,9 +30,7 @@ builder.Services.AddCors(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
-{
     throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
-}
 
 builder.Services.AddDbContext<AppDbcontext>(options =>
     options.UseSqlServer(connectionString));
@@ -45,8 +43,8 @@ app.UseCors("AllowReactApp");
 
 app.MapRazorPages();
 
-app.UseSwagger();  
-app.UseSwaggerUI(); 
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

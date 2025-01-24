@@ -2,16 +2,6 @@ namespace DataProcessingBS.Contracts;
 
 //public record CreateEpisodeRequest(int Media_Id, int Series_Id, int Season_Number, int Episode_Number, string Title, int? Duration);
 
-/*
-public record CreateEpisodeRequest(
-    int Media_Id,
-    int Series_Id,      
-    int Season_Number,
-    int Episode_Number,
-    string Title,
-    int? Duration
-);
-*/
 public record CreateEpisodeRequest(
     string Media_Title,   // Title for the new Media
     int Genre_Id,         // Genre for the new Media

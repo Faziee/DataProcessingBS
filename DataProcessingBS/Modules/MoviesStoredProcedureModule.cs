@@ -1,3 +1,4 @@
+using System.Data;
 using DataProcessingBS.Contracts;
 using DataProcessingBS.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +17,8 @@ public static class MoviesStoredProcedureModule
             var mediaIdParameter = new SqlParameter
             {
                 ParameterName = "@MediaId",
-                SqlDbType = System.Data.SqlDbType.Int,
-                Direction = System.Data.ParameterDirection.Output
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
             };
 
             await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
@@ -28,7 +29,7 @@ public static class MoviesStoredProcedureModule
                 @Quality={createMovieRequest.Quality}, 
                 @MediaId={mediaIdParameter} OUTPUT");
 
-            int mediaId = (int)mediaIdParameter.Value;
+            var mediaId = (int)mediaIdParameter.Value;
 
             await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
                 EXEC CreateMovie 
@@ -37,7 +38,7 @@ public static class MoviesStoredProcedureModule
 
             return Results.Ok(new { Message = "Movie created successfully" });
         });
-        
+
         app.MapGet("/stored-procedure-get-movies", async (AppDbcontext dbContext) =>
         {
             var movies = await dbContext.Set<MovieDto>()
@@ -47,7 +48,7 @@ public static class MoviesStoredProcedureModule
             return Results.Ok(movies);
         });
 
-        
+
         app.MapGet("/stored-procedure-get-movie-by-id/{id:int}", async (AppDbcontext dbContext, int id) =>
         {
             var movies = await dbContext.Set<MovieDto>()
@@ -56,33 +57,24 @@ public static class MoviesStoredProcedureModule
 
             var movie = movies.FirstOrDefault();
 
-            if (movie == null)
-            {
-                return Results.NotFound(new { Message = $"Movie with ID {id} not found." });
-            }
+            if (movie == null) return Results.NotFound(new { Message = $"Movie with ID {id} not found." });
 
             return Results.Ok(movie);
         });
 
         app.MapGet("/stored-procedure-get-movies-by-genre/{genre}", async (string genre, AppDbcontext dbContext) =>
         {
-            if (string.IsNullOrWhiteSpace(genre))
-            {
-                return Results.BadRequest(new { Message = "Genre cannot be empty." });
-            }
+            if (string.IsNullOrWhiteSpace(genre)) return Results.BadRequest(new { Message = "Genre cannot be empty." });
 
             var movies = await dbContext.Set<MovieDto>()
                 .FromSqlInterpolated($"EXEC GetMoviesByGenre @GenreType = {genre}")
                 .ToListAsync();
 
-            if (!movies.Any())
-            {
-                return Results.NotFound(new { Message = $"No movies found for genre '{genre}'." });
-            }
+            if (!movies.Any()) return Results.NotFound(new { Message = $"No movies found for genre '{genre}'." });
 
             return Results.Ok(movies);
         });
-        
+
         app.MapPut("/stored-procedure-update-movie-by-id",
             async ([FromBody] UpdateMovieRequest updateMovieRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -90,24 +82,22 @@ public static class MoviesStoredProcedureModule
                     $"EXEC UpdateMovieById @MovieId={updateMovieRequest.Movie_Id}, @HasSubtitles={updateMovieRequest.Has_Subtitles}");
                 return Results.Ok();
             });
-        
-        app.MapDelete("/stored-procedure-delete-movie/{movieId}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var mediaId = await dbContext.Movies
-                .Where(m => m.Movie_Id == movieId)
-                .Select(m => m.Media_Id)
-                .FirstOrDefaultAsync();
 
-            if (mediaId == 0)
+        app.MapDelete("/stored-procedure-delete-movie/{movieId}",
+            async (int movieId, [FromServices] AppDbcontext dbContext) =>
             {
-                return Results.NotFound("Movie not found.");
-            }
+                var mediaId = await dbContext.Movies
+                    .Where(m => m.Movie_Id == movieId)
+                    .Select(m => m.Media_Id)
+                    .FirstOrDefaultAsync();
 
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMovieById @MovieId={movieId}");
+                if (mediaId == 0) return Results.NotFound("Movie not found.");
 
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMovieById @MovieId={movieId}");
 
-            return Results.Ok();
-        });
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
+
+                return Results.Ok();
+            });
     }
 }

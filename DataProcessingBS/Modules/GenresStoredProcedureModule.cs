@@ -22,24 +22,24 @@ public static class GenresStoredProcedureModule
             var genres = await dbContext.Genres.FromSqlRaw("EXEC GetAllGenres").ToListAsync();
             return Results.Ok(genres);
         });
-        
-        app.MapGet("/stored-procedure-get-genre-by-id/{genreId:int}", async (int genreId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var genre = await dbContext.Genres
-                .FromSqlInterpolated($"EXEC GetGenreById @GenreId={genreId}")
-                .ToListAsync()
-                .ContinueWith(task => task.Result.Select(g => new GenreDto()
-                {
-               
-                    Genre_Id = g.Genre_Id,
-                    Type = g.Type
-                }).FirstOrDefault());
 
-            return genre == null
-                ? Results.NotFound()
-                : Results.Ok(genre);
-        });
-        
+        app.MapGet("/stored-procedure-get-genre-by-id/{genreId:int}",
+            async (int genreId, [FromServices] AppDbcontext dbContext) =>
+            {
+                var genre = await dbContext.Genres
+                    .FromSqlInterpolated($"EXEC GetGenreById @GenreId={genreId}")
+                    .ToListAsync()
+                    .ContinueWith(task => Enumerable.Select(task.Result, g => new GenreDto
+                    {
+                        Genre_Id = g.Genre_Id,
+                        Type = g.Type
+                    }).FirstOrDefault());
+
+                return genre == null
+                    ? Results.NotFound()
+                    : Results.Ok(genre);
+            });
+
         app.MapPut("/stored-procedure-update-genre-by-id",
             async ([FromBody] UpdateGenreRequest updateGenreRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -47,11 +47,12 @@ public static class GenresStoredProcedureModule
                     $"EXEC UpdateGenreById @GenreId={updateGenreRequest.Genre_Id}, @Type={updateGenreRequest.Type}");
                 return Results.Ok();
             });
-        
-        app.MapDelete("/stored-procedure-delete-genre-by-id/{genreId}", async (int genreId,[FromServices] AppDbcontext dbContext) =>
-        {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteGenreById @GenreId={genreId}");
-            return Results.Ok();
-        });
+
+        app.MapDelete("/stored-procedure-delete-genre-by-id/{genreId}",
+            async (int genreId, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteGenreById @GenreId={genreId}");
+                return Results.Ok();
+            });
     }
 }
