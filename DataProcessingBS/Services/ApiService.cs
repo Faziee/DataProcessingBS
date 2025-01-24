@@ -33,7 +33,7 @@ public class ApiKeyService
         {
             using var result = await command.ExecuteReaderAsync();
             if (await result.ReadAsync())
-                return result.GetString(0); 
+                return result.GetString(0);
 
             return null;
         }

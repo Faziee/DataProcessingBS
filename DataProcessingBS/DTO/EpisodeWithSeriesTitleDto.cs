@@ -11,10 +11,10 @@ public class EpisodeWithSeriesTitleDto
     public int Series_Id { get; set; }
     public string Title { get; set; }
     public int Duration { get; set; }
-    
+
     [Column("Season_Number")] 
     public int SeasonNumber { get; set; }
-    
+
     [Column("Episode_Number")] 
     public int EpisodeNumber { get; set; }
 }

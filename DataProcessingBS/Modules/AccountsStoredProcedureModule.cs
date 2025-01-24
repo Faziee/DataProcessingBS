@@ -113,11 +113,30 @@ public static class AccountsStoredProcedureModule
             return Results.Ok();
         });
 
-        app.MapDelete("/stored-procedure-delete-account/{accountId}",
+        /*app.MapDelete("/stored-procedure-delete-account/{accountId}",
             async (int accountId, [FromServices] AppDbcontext dbContext) =>
             {
                 await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteAccountById @accountId={accountId}");
                 return Results.Ok();
+            });*/
+
+        app.MapDelete("/stored-procedure-delete-account/{accountId}",
+            async (int accountId, [FromServices] AppDbcontext dbContext) =>
+            {
+                try
+                {
+                    await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                        $"EXEC DeleteAccountById @accountId={accountId}");
+
+                    await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                        $"EXEC DeleteApiKeyByAccountId @AccountId={accountId}");
+
+                    return Results.Ok(new { Message = "Account and associated API key deleted successfully." });
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Failed to delete account: {ex.Message}");
+                }
             });
     }
 }
