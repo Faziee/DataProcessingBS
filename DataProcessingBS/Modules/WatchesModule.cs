@@ -16,7 +16,6 @@ public static class WatchesModule
             {
                 Profile_Id = createWatchRequest.Profile_Id,
                 Media_Id = createWatchRequest.Media_Id,
-                Watch_Date = createWatchRequest.Watch_Date,
                 Status = createWatchRequest.Status,
                 Pause_Time = createWatchRequest.Pause_Time
             };

@@ -1,3 +1,3 @@
 namespace DataProcessingBS.Contracts;
 
-public record CreateWatchRequest(int Profile_Id, int Media_Id, DateOnly Watch_Date, string Status, DateTime? Pause_Time);
+public record CreateWatchRequest(int Profile_Id, int Media_Id, string Status, DateTime? Pause_Time);

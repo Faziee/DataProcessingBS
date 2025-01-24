@@ -17,7 +17,6 @@ namespace DataProcessingBS.Modules
                 {
                     Profile_Id = createWatchListRequest.Profile_Id,
                     Media_Id = createWatchListRequest.Media_Id,
-                    Added_Date = createWatchListRequest.AddedDate
                 };
 
                 await dbContext.WatchLists.AddAsync(watchList);

@@ -13,7 +13,7 @@ namespace DataProcessingBS.Modules
             app.MapPost("/stored-procedure-create-watchlist", async ([FromBody] CreateWatchListRequest createWatchListRequest, [FromServices] AppDbcontext dbContext) =>
             {
                 await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC CreateWatchList @ProfileId={createWatchListRequest.Profile_Id}, @MediaId={createWatchListRequest.Media_Id}, @AddedDate={createWatchListRequest.AddedDate.ToDateTime(TimeOnly.MinValue)}");
+                    $"EXEC CreateWatchList @ProfileId={createWatchListRequest.Profile_Id}, @MediaId={createWatchListRequest.Media_Id}");
                 return Results.Ok();
             });
 

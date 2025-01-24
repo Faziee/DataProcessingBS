@@ -1,3 +1,3 @@
 namespace DataProcessingBS.Contracts;
 
-public record CreateWatchListRequest(int Profile_Id, int Media_Id, DateOnly AddedDate);
+public record CreateWatchListRequest(int Profile_Id, int Media_Id);

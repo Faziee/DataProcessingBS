@@ -13,7 +13,7 @@ public static class WatchesStoredProcedureModule
             async ([FromBody] CreateWatchRequest createWatchRequest, [FromServices] AppDbcontext dbContext) =>
             {
                 await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC CreateWatch @ProfileId={createWatchRequest.Profile_Id}, @MediaId={createWatchRequest.Media_Id}, @WatchDate={createWatchRequest.Watch_Date}, @Status={createWatchRequest.Status}, @PauseTime={createWatchRequest.Pause_Time}");
+                    $"EXEC CreateWatch @ProfileId={createWatchRequest.Profile_Id}, @MediaId={createWatchRequest.Media_Id}, @Status={createWatchRequest.Status}, @PauseTime={createWatchRequest.Pause_Time}");
                 return Results.Ok();
             });
 
