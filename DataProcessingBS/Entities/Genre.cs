@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace DataProcessingBS.Entities;
 
@@ -8,6 +9,4 @@ public class Genre
     public int Genre_Id { get; set; }
 
     public string Type { get; set; }
-
-    public ICollection<Media> Media { get; set; }
 }

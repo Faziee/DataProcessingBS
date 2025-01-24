@@ -18,31 +18,44 @@ public static class MediaStoredProcedureModule
                     $"EXEC UpdateMediaById @MediaId={updateMediaRequest.Media_Id}, @GenreId={updateMediaRequest.Genre_Id}, @Title={updateMediaRequest.Title}, @AgeRating={updateMediaRequest.Age_Rating}, @Quality={updateMediaRequest.Quality}");
                 return Results.Ok();
             });
-
-        app.MapGet("/stored-procedure-get-media", async (AppDbcontext dbContext) =>
+        
+        app.MapGet("/procedure-get-media", async (AppDbcontext dbContext) =>
         {
-            var media = await dbContext.Media.FromSqlRaw("EXEC GetAllMedia").ToListAsync();
+            var media = await dbContext.Media
+                .Select(m => new MediaDto
+                {
+                    Media_Id = m.Media_Id,
+                    Genre_Id = m.Genre_Id,
+                    Title = m.Title,
+                    Age_Rating = m.Age_Rating,
+                    Quality = m.Quality
+                })
+                .ToListAsync();
+
             return Results.Ok(media);
         });
 
-        app.MapGet("/stored-procedure-get-media-by-id/{mediaId:int}",
-            async (int mediaId, [FromServices] AppDbcontext dbContext) =>
-            {
-                var media = await dbContext.Media
-                    .FromSqlInterpolated($"EXEC GetMediaById @MediaId={mediaId}")
-                    .ToListAsync()
-                    .ContinueWith(task => Enumerable.Select(task.Result, m => new MediaDto
-                    {
-                        Media_Id = m.Media_Id,
-                        Genre_Id = m.Genre_Id,
-                        Title = m.Title,
-                        Age_Rating = m.Age_Rating,
-                        Quality = m.Quality
-                    }).FirstOrDefault());
+        // Get Media by ID
+        app.MapGet("/get-media-by-id/{mediaId:int}", async (int mediaId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var media = await dbContext.Media
+                .Where(m => m.Media_Id == mediaId)
+                .Select(m => new MediaDto
+                {
+                    Media_Id = m.Media_Id,
+                    Genre_Id = m.Genre_Id,
+                    Title = m.Title,
+                    Age_Rating = m.Age_Rating,
+                    Quality = m.Quality
+                })
+                .FirstOrDefaultAsync();
 
-                return media == null
-                    ? Results.NotFound()
-                    : Results.Ok(media);
-            });
+            if (media == null)
+            {
+                return Results.NotFound(new { Message = $"Media with ID {mediaId} not found." });
+            }
+
+            return Results.Ok(media);
+        });
     }
 }

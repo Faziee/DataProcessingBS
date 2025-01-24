@@ -86,16 +86,11 @@ public static class MoviesStoredProcedureModule
         app.MapDelete("/stored-procedure-delete-movie/{movieId}",
             async (int movieId, [FromServices] AppDbcontext dbContext) =>
             {
-                var mediaId = await dbContext.Movies
-                    .Where(m => m.Movie_Id == movieId)
-                    .Select(m => m.Media_Id)
-                    .FirstOrDefaultAsync();
+                // Call the stored procedure to handle the deletion
+                var result = await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC DeleteMovieById @MovieId={movieId}");
 
-                if (mediaId == 0) return Results.NotFound("Movie not found.");
-
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMovieById @MovieId={movieId}");
-
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
+                if (result == 0) return Results.NotFound("Movie not found.");
 
                 return Results.Ok();
             });

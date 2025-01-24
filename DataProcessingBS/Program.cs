@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DataProcessingBS.Data;
 using DataProcessingBS.Middleware;
 using DataProcessingBS.Modules;
@@ -7,15 +8,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddXmlSerializerFormatters();
+
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpClient<TmdbService>();
 builder.Services.AddRazorPages();
-
 builder.Services.AddScoped<ApiKeyService>();
-
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -38,8 +38,8 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 
 var app = builder.Build();
 
+app.UseDeveloperExceptionPage();
 app.UseCors("AllowReactApp");
-
 app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapRazorPages();
@@ -49,8 +49,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
-app.MapControllers();
 
 app.AddExternalMovieEndpoints();
 app.AddWatchesStoredProcedureEndpoints();
@@ -65,6 +63,7 @@ app.AddEpisodeStoredProcedureEndpoints();
 app.AddMediaStoredProcedureEndpoints();
 app.AddSubtitlesStoredProcedureEndpoints();
 app.AddGenresStoredProcedureEndpoints();
-app.UseDeveloperExceptionPage();
+
+app.MapControllers();
 
 app.Run();

@@ -34,15 +34,15 @@ public class AppDbcontext : DbContext
         modelBuilder.Entity<SubscriptionDto>().HasNoKey();
 
         modelBuilder.Entity<Profile>()
-            .HasOne(p => p.Account) 
-            .WithMany(a => a.Profiles) 
-            .HasForeignKey(p => p.Account_Id); 
+            .HasOne(p => p.Account)
+            .WithMany(a => a.Profiles)
+            .HasForeignKey(p => p.Account_Id);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
-            .EnableSensitiveDataLogging() 
-            .LogTo(Console.WriteLine, LogLevel.Information); 
+            .EnableSensitiveDataLogging()
+            .LogTo(Console.WriteLine, LogLevel.Information);
     }
 }

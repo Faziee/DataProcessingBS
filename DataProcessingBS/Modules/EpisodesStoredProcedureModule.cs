@@ -92,7 +92,7 @@ public static class EpisodesStoredProcedureModule
             async (int episodeId, [FromServices] AppDbcontext dbContext) =>
             {
                 var episode = await dbContext.Episodes
-                    .FromSqlInterpolated($"EXEC GetEpisodeById @Episode_Id={episodeId}")
+                    .FromSqlInterpolated($"EXEC GetEpisodeById @EpisodeId={episodeId}")
                     .ToListAsync()
                     .ContinueWith(task => Enumerable.Select(task.Result, e => new EpisodeDto
                     {
@@ -110,28 +110,22 @@ public static class EpisodesStoredProcedureModule
                     : Results.Ok(episode);
             });
 
-
         app.MapPut("/stored-procedure-update-episode-by-id",
             async ([FromBody] UpdateEpisodeRequest updateEpisodeRequest, [FromServices] AppDbcontext dbContext) =>
             {
                 await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC UpdateEpisodeById @Episode_Id={updateEpisodeRequest.Episode_Id}, @Media_Id={updateEpisodeRequest.Media_Id}, @Series_Id={updateEpisodeRequest.Series_Id}, @Season_Number={updateEpisodeRequest.Season_Number}, @Episode_Number={updateEpisodeRequest.Episode_Number}, @Title={updateEpisodeRequest.Title}, @Duration={updateEpisodeRequest.Duration}");
+                    $"EXEC UpdateEpisodeById @EpisodeId={updateEpisodeRequest.Episode_Id}, @MediaId={updateEpisodeRequest.Media_Id}, @SeriesId={updateEpisodeRequest.Series_Id}, @SeasonNumber={updateEpisodeRequest.Season_Number}, @EpisodeNumber={updateEpisodeRequest.Episode_Number}, @Title={updateEpisodeRequest.Title}, @Duration={updateEpisodeRequest.Duration}");
                 return Results.Ok();
             });
 
         app.MapDelete("/stored-procedure-delete-episode/{episodeId}",
             async (int episodeId, [FromServices] AppDbcontext dbContext) =>
             {
-                var mediaId = await dbContext.Episodes
-                    .Where(e => e.Episode_Id == episodeId)
-                    .Select(e => e.Media_Id)
-                    .FirstOrDefaultAsync();
+                // Call your stored procedure to handle everything
+                var result = await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC DeleteEpisodeById @EpisodeId={episodeId}");
 
-                if (mediaId == 0) return Results.NotFound("Episode not found.");
-
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEpisodeById @EpisodeId={episodeId}");
-
-                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
+                if (result == 0) return Results.NotFound("Episode not found.");
 
                 return Results.Ok();
             });
