@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -37,9 +38,9 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 
 var app = builder.Build();
 
-app.UseMiddleware<ApiKeyMiddleware>();
-
 app.UseCors("AllowReactApp");
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapRazorPages();
 
