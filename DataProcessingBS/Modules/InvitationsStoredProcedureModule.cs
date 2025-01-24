@@ -17,14 +17,6 @@ public static class InvitationsStoredProcedureModule
                 return Results.Ok();
             });
 
-        app.MapPut("/stored-procedure-update-invitation-by-id",
-            async ([FromBody] UpdateInvitationRequest updateInvitationRequest, [FromServices] AppDbcontext dbContext) =>
-            {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC UpdateInvitationById @InvitationId={updateInvitationRequest.Invitation_Id}, @InviterId={updateInvitationRequest.Inviter_Id}, @InviteeId={updateInvitationRequest.Invitee_Id}");
-                return Results.Ok();
-            });
-
         app.MapGet("/stored-procedure-get-invitations", async (AppDbcontext dbContext) =>
         {
             var invitations = await dbContext.Invitations.FromSqlRaw("EXEC GetAllInvitations").ToListAsync();
@@ -47,8 +39,15 @@ public static class InvitationsStoredProcedureModule
                 ? Results.NotFound()
                 : Results.Ok(invitation);
         });
+        
+        app.MapPut("/stored-procedure-update-invitation-by-id",
+            async ([FromBody] UpdateInvitationRequest updateInvitationRequest, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC UpdateInvitationById @InvitationId={updateInvitationRequest.Invitation_Id}, @InviterId={updateInvitationRequest.Inviter_Id}, @InviteeId={updateInvitationRequest.Invitee_Id}");
+                return Results.Ok();
+            });
 
-        // Delete Invitation by ID
         app.MapDelete("/stored-procedure-delete-invitation-by-id/{invitationId}", async (int invitationId, [FromServices] AppDbcontext dbContext) =>
         {
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteInvitationById @InvitationId={invitationId}");

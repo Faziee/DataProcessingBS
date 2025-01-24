@@ -10,29 +10,27 @@ public static class SubtitlesModule
 {
     public static void AddSubtitlesEndpoints(this IEndpointRouteBuilder app)
     {
-        // Create a new subtitle
-        app.MapPost("/subtitles", async ([FromBody] CreatSubtitleRequest request, [FromServices] AppDbcontext dbContext) =>
-        {
-            var subtitle = new Subtitle
+        app.MapPost("/subtitles",
+            async ([FromBody] CreatSubtitleRequest request, [FromServices] AppDbcontext dbContext) =>
             {
-                Media_Id = request.Media_Id,
-                Language = request.Language
-            };
+                var subtitle = new Subtitle
+                {
+                    Media_Id = request.Media_Id,
+                    Language = request.Language
+                };
 
-            await dbContext.Subtitles.AddAsync(subtitle);
-            await dbContext.SaveChangesAsync();
+                await dbContext.Subtitles.AddAsync(subtitle);
+                await dbContext.SaveChangesAsync();
 
-            return Results.Ok(subtitle);
-        });
+                return Results.Ok(subtitle);
+            });
 
-        // Get all subtitles
         app.MapGet("/subtitles", async ([FromServices] AppDbcontext dbContext) =>
         {
             var subtitles = await dbContext.Subtitles.ToListAsync();
             return Results.Ok(subtitles);
         });
 
-        // Get subtitle by ID
         app.MapGet("/subtitles/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var subtitle = await dbContext.Subtitles.FirstOrDefaultAsync(s => s.Subtitle_Id == id);
@@ -42,7 +40,6 @@ public static class SubtitlesModule
                 : Results.Ok(subtitle);
         });
 
-        // Delete subtitle by ID
         app.MapDelete("/subtitles/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var subtitle = await dbContext.Subtitles.FirstOrDefaultAsync(s => s.Subtitle_Id == id);

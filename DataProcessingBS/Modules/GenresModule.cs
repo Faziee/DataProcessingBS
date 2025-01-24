@@ -10,7 +10,6 @@ public static class GenresModule
 {
     public static void AddGenresEndpoints(this IEndpointRouteBuilder app)
     {
-        // Create Genre
         app.MapPost("/genre",
             async ([FromBody] CreateGenreRequest createGenreRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -23,8 +22,13 @@ public static class GenresModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(genre);
             });
+
+        app.MapGet("/genres", async (AppDbcontext dbContext) =>
+        {
+            var genres = await dbContext.Genres.ToListAsync();
+            return Results.Ok(genres);
+        });
         
-        // Update
         app.MapPut("/genres/{genreId}", async (int genreId, [FromBody] UpdateGenreRequest updateGenreRequest, [FromServices] AppDbcontext dbContext) =>
         {
             var genre = await dbContext.Genres.FirstOrDefaultAsync(x => x.Genre_Id == genreId);
@@ -42,15 +46,7 @@ public static class GenresModule
                 return Results.NotFound();
             }
         });
-
-        // Get All Genres
-        app.MapGet("/genres", async (AppDbcontext dbContext) =>
-        {
-            var genres = await dbContext.Genres.ToListAsync();
-            return Results.Ok(genres);
-        });
         
-        // Delete Genre by ID
         app.MapDelete("/genres/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var genre = await dbContext.Genres.FirstOrDefaultAsync(s => s.Genre_Id == id);

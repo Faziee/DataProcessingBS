@@ -10,22 +10,36 @@ public static class WatchesModule
 {
     public static void AddWatchesEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/watches", async ([FromBody] CreateWatchRequest createWatchRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            var watch = new Watch()
+        app.MapPost("/watches",
+            async ([FromBody] CreateWatchRequest createWatchRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                Profile_Id = createWatchRequest.Profile_Id,
-                Media_Id = createWatchRequest.Media_Id,
-                Status = createWatchRequest.Status,
-                Pause_Time = createWatchRequest.Pause_Time
-            };
+                var watch = new Watch
+                {
+                    Profile_Id = createWatchRequest.Profile_Id,
+                    Media_Id = createWatchRequest.Media_Id,
+                    Status = createWatchRequest.Status,
+                    Pause_Time = createWatchRequest.Pause_Time
+                };
 
-            await dbContext.Watches.AddAsync(watch);
-            await dbContext.SaveChangesAsync();
-            return Results.Ok(watch);
+                await dbContext.Watches.AddAsync(watch);
+                await dbContext.SaveChangesAsync();
+                return Results.Ok(watch);
+            });
+
+        app.MapGet("/watches", async (AppDbcontext dbContext) =>
+        {
+            var watches = await dbContext.Watches.ToListAsync();
+            return Results.Ok(watches);
         });
 
-        app.MapPut("/watches/{watchId}", async (int watchId, [FromBody] UpdateWatchRequest updateWatchRequest, [FromServices] AppDbcontext dbContext) =>
+        app.MapGet("/watches/{watchId:int}", async (int watchId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var watch = await dbContext.Watches.FindAsync(watchId);
+            return watch == null ? Results.NotFound() : Results.Ok(watch);
+        });
+
+        app.MapPut("/watches/{watchId}", async (int watchId, [FromBody] UpdateWatchRequest updateWatchRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             var watch = await dbContext.Watches.FirstOrDefaultAsync(w => w.Watch_Id == watchId);
 
@@ -39,18 +53,6 @@ public static class WatchesModule
 
             await dbContext.SaveChangesAsync();
             return Results.Ok(watch);
-        });
-
-        app.MapGet("/watches", async (AppDbcontext dbContext) =>
-        {
-            var watches = await dbContext.Watches.ToListAsync();
-            return Results.Ok(watches);
-        });
-
-        app.MapGet("/watches/{watchId:int}", async (int watchId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var watch = await dbContext.Watches.FindAsync(watchId);
-            return watch == null ? Results.NotFound() : Results.Ok(watch);
         });
 
         app.MapDelete("/watches/{watchId:int}", async (int watchId, [FromServices] AppDbcontext dbContext) =>

@@ -17,6 +17,33 @@ public static class ProfilesStoredProcedureModule
                 return Results.Ok();
             });
 
+        app.MapGet("/stored-procedure-get-profiles", async (AppDbcontext dbContext) =>
+        {
+            var profiles = await dbContext.Profiles.FromSqlRaw("EXEC GetAllProfiles").ToListAsync();
+            return Results.Ok(profiles);
+        });
+
+        app.MapGet("/stored-procedure-get-profile-by-id/{profileId:int}",
+            async (int profileId, [FromServices] AppDbcontext dbContext) =>
+            {
+                var profile = await dbContext.Profiles
+                    .FromSqlInterpolated($"EXEC GetProfileById @ProfileId={profileId}")
+                    .ToListAsync()
+                    .ContinueWith(task => Enumerable.Select(task.Result, p => new ProfileDto
+                    {
+                        Profile_Id = p.Profile_Id,
+                        Account_Id = p.Account_Id,
+                        Profile_Image = p.Profile_Image,
+                        Child_Profile = p.Child_Profile,
+                        User_Age = p.User_Age,
+                        Language = p.Language
+                    }).FirstOrDefault());
+
+                return profile == null
+                    ? Results.NotFound()
+                    : Results.Ok(profile);
+            });
+
         app.MapPut("/stored-procedure-update-profile-by-id",
             async ([FromBody] UpdateProfileRequest updateProfileRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -25,36 +52,11 @@ public static class ProfilesStoredProcedureModule
                 return Results.Ok();
             });
 
-        app.MapGet("/stored-procedure-get-profiles", async (AppDbcontext dbContext) =>
-        {
-            var profiles = await dbContext.Profiles.FromSqlRaw("EXEC GetAllProfiles").ToListAsync();
-            return Results.Ok(profiles);
-        });
-
-        app.MapGet("/stored-procedure-get-profile-by-id/{profileId:int}", async (int profileId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var profile = await dbContext.Profiles
-                .FromSqlInterpolated($"EXEC GetProfileById @ProfileId={profileId}")
-                .ToListAsync()
-                .ContinueWith(task => task.Result.Select(p => new ProfileDto()
-                {
-                    Profile_Id = p.Profile_Id,
-                    Account_Id = p.Account_Id,
-                    Profile_Image = p.Profile_Image,
-                    Child_Profile = p.Child_Profile,
-                    User_Age = p.User_Age,
-                    Language = p.Language
-                }).FirstOrDefault());
-
-            return profile == null
-                ? Results.NotFound()
-                : Results.Ok(profile);
-        });
-
-        app.MapDelete("/stored-procedure-delete-profile-by-id/{profileId}", async (int profileId, [FromServices] AppDbcontext dbContext) =>
-        {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteProfileById @ProfileId={profileId}");
-            return Results.Ok();
-        });
+        app.MapDelete("/stored-procedure-delete-profile-by-id/{profileId}",
+            async (int profileId, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteProfileById @ProfileId={profileId}");
+                return Results.Ok();
+            });
     }
 }

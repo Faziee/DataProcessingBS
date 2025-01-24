@@ -11,7 +11,6 @@ public static class MoviesModule
     {
         app.MapPost("/movies", async ([FromBody] CreateMovieRequest createMovieRequest, [FromServices] AppDbcontext dbContext) =>
         {
-            // Step 1: Use the CreateNewMedia stored procedure to create Media
             var mediaIdParameter = new SqlParameter()
             {
                 ParameterName = "@MediaId",
@@ -29,7 +28,6 @@ public static class MoviesModule
 
             int mediaId = (int)mediaIdParameter.Value;
 
-            // Step 2: Create Movie
             var movie = new Movie
             {
                 Media_Id = mediaId, 

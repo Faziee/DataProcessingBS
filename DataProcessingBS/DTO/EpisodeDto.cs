@@ -9,5 +9,4 @@ public class EpisodeDto
     public int Episode_Number { get; set; }
     public string Title { get; set; }
     public int? Duration { get; set; }
-
 }

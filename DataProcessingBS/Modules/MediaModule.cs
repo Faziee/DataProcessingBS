@@ -10,7 +10,6 @@ public static class MediaModule
 {
     public static void AddMediaEndpoints(this IEndpointRouteBuilder app)
     {
-        // Media can not exist on it's own so it can not be created or deleted independently either! 
         app.MapPut("/media/{mediaId}", async (int mediaId, [FromBody] UpdateMediaRequest updateMediaRequest, [FromServices] AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media.FirstOrDefaultAsync(x => x.Media_Id == mediaId);

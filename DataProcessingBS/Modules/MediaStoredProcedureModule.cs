@@ -9,6 +9,8 @@ public static class MediaStoredProcedureModule
 {
     public static void AddMediaStoredProcedureEndpoints(this IEndpointRouteBuilder app)
     {
+        // Media can not exist on it's own so it can not be created or deleted independently either
+
         app.MapPut("/stored-procedure-update-media-by-id", async ([FromBody] UpdateMediaRequest updateMediaRequest, [FromServices] AppDbcontext dbContext) =>
         {
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC UpdateMediaById @MediaId={updateMediaRequest.Media_Id}, @GenreId={updateMediaRequest.Genre_Id}, @Title={updateMediaRequest.Title}, @AgeRating={updateMediaRequest.Age_Rating}, @Quality={updateMediaRequest.Quality}");

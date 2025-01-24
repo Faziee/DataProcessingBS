@@ -13,7 +13,6 @@ public static class MoviesStoredProcedureModule
         app.MapPost("/stored-procedure-create-movie", async ([FromBody] CreateMovieRequest createMovieRequest,
             [FromServices] AppDbcontext dbContext) =>
         {
-            // Step 1: Create the Media using the CreateNewMedia stored procedure
             var mediaIdParameter = new SqlParameter
             {
                 ParameterName = "@MediaId",
@@ -31,7 +30,6 @@ public static class MoviesStoredProcedureModule
 
             int mediaId = (int)mediaIdParameter.Value;
 
-            // Step 2: Create the Movie using the stored procedure
             await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
                 EXEC CreateMovie 
                 @MediaId={mediaId}, 
@@ -39,15 +37,6 @@ public static class MoviesStoredProcedureModule
 
             return Results.Ok(new { Message = "Movie created successfully" });
         });
-
-        app.MapPut("/stored-procedure-update-movie-by-id",
-            async ([FromBody] UpdateMovieRequest updateMovieRequest, [FromServices] AppDbcontext dbContext) =>
-            {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC UpdateMovieById @MovieId={updateMovieRequest.Movie_Id}, @HasSubtitles={updateMovieRequest.Has_Subtitles}");
-                return Results.Ok();
-            });
-        
         
         app.MapGet("/stored-procedure-get-movies", async (AppDbcontext dbContext) =>
         {
@@ -93,11 +82,17 @@ public static class MoviesStoredProcedureModule
 
             return Results.Ok(movies);
         });
-
-
+        
+        app.MapPut("/stored-procedure-update-movie-by-id",
+            async ([FromBody] UpdateMovieRequest updateMovieRequest, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC UpdateMovieById @MovieId={updateMovieRequest.Movie_Id}, @HasSubtitles={updateMovieRequest.Has_Subtitles}");
+                return Results.Ok();
+            });
+        
         app.MapDelete("/stored-procedure-delete-movie/{movieId}", async (int movieId, [FromServices] AppDbcontext dbContext) =>
         {
-            // Get the Media_Id associated with the movie
             var mediaId = await dbContext.Movies
                 .Where(m => m.Movie_Id == movieId)
                 .Select(m => m.Media_Id)
@@ -108,10 +103,8 @@ public static class MoviesStoredProcedureModule
                 return Results.NotFound("Movie not found.");
             }
 
-            // Delete the movie using the stored procedure
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMovieById @MovieId={movieId}");
 
-            // Delete the associated media
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteMediaById @MediaId={mediaId}");
 
             return Results.Ok();

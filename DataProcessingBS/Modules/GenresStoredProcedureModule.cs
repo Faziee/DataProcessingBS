@@ -17,14 +17,6 @@ public static class GenresStoredProcedureModule
                 return Results.Ok();
             });
 
-        app.MapPut("/stored-procedure-update-genre-by-id",
-            async ([FromBody] UpdateGenreRequest updateGenreRequest, [FromServices] AppDbcontext dbContext) =>
-            {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"EXEC UpdateGenreById @GenreId={updateGenreRequest.Genre_Id}, @Type={updateGenreRequest.Type}");
-                return Results.Ok();
-            });
-
         app.MapGet("/stored-procedure-get-genres", async (AppDbcontext dbContext) =>
         {
             var genres = await dbContext.Genres.FromSqlRaw("EXEC GetAllGenres").ToListAsync();
@@ -48,7 +40,14 @@ public static class GenresStoredProcedureModule
                 : Results.Ok(genre);
         });
         
-        // Delete Genre by ID
+        app.MapPut("/stored-procedure-update-genre-by-id",
+            async ([FromBody] UpdateGenreRequest updateGenreRequest, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"EXEC UpdateGenreById @GenreId={updateGenreRequest.Genre_Id}, @Type={updateGenreRequest.Type}");
+                return Results.Ok();
+            });
+        
         app.MapDelete("/stored-procedure-delete-genre-by-id/{genreId}", async (int genreId,[FromServices] AppDbcontext dbContext) =>
         {
             await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteGenreById @GenreId={genreId}");

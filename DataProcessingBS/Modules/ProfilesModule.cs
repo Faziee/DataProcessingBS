@@ -10,23 +10,37 @@ public static class ProfileModule
 {
     public static void AddProfileEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/profiles", async ([FromBody] CreateProfileRequest createProfileRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            var profile = new Profile()
+        app.MapPost("/profiles",
+            async ([FromBody] CreateProfileRequest createProfileRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                Account_Id = createProfileRequest.Account_Id,
-                Profile_Image = createProfileRequest.Profile_Image,
-                Child_Profile = createProfileRequest.Child_Profile,
-                User_Age = createProfileRequest.User_Age,
-                Language = createProfileRequest.Language
-            };
+                var profile = new Profile
+                {
+                    Account_Id = createProfileRequest.Account_Id,
+                    Profile_Image = createProfileRequest.Profile_Image,
+                    Child_Profile = createProfileRequest.Child_Profile,
+                    User_Age = createProfileRequest.User_Age,
+                    Language = createProfileRequest.Language
+                };
 
-            await dbContext.Profiles.AddAsync(profile);
-            await dbContext.SaveChangesAsync();
-            return Results.Ok(profile);
+                await dbContext.Profiles.AddAsync(profile);
+                await dbContext.SaveChangesAsync();
+                return Results.Ok(profile);
+            });
+
+        app.MapGet("/profiles", async (AppDbcontext dbContext) =>
+        {
+            var profiles = await dbContext.Profiles.ToListAsync();
+            return Results.Ok(profiles);
         });
 
-        app.MapPut("/profiles/{profileId}", async (int profileId, [FromBody] UpdateProfileRequest updateProfileRequest, [FromServices] AppDbcontext dbContext) =>
+        app.MapGet("/profiles/{profileId:int}", async (int profileId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var profile = await dbContext.Profiles.FindAsync(profileId);
+            return profile == null ? Results.NotFound() : Results.Ok(profile);
+        });
+
+        app.MapPut("/profiles/{profileId}", async (int profileId, [FromBody] UpdateProfileRequest updateProfileRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             var profile = await dbContext.Profiles.FirstOrDefaultAsync(p => p.Profile_Id == profileId);
 
@@ -40,18 +54,6 @@ public static class ProfileModule
 
             await dbContext.SaveChangesAsync();
             return Results.Ok(profile);
-        });
-
-        app.MapGet("/profiles", async (AppDbcontext dbContext) =>
-        {
-            var profiles = await dbContext.Profiles.ToListAsync();
-            return Results.Ok(profiles);
-        });
-
-        app.MapGet("/profiles/{profileId:int}", async (int profileId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var profile = await dbContext.Profiles.FindAsync(profileId);
-            return profile == null ? Results.NotFound() : Results.Ok(profile);
         });
 
         app.MapDelete("/profiles/{profileId:int}", async (int profileId, [FromServices] AppDbcontext dbContext) =>

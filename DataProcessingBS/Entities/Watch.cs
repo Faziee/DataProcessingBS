@@ -4,9 +4,9 @@ namespace DataProcessingBS.Entities;
 
 public class Watch
 {
-    [Key]
+    [Key] 
     public int Watch_Id { get; set; }
-    
+
     public int Profile_Id { get; set; }
     public int Media_Id { get; set; }
     public DateOnly Watch_Date { get; set; }

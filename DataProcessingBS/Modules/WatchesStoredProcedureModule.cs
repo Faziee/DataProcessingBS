@@ -17,6 +17,33 @@ public static class WatchesStoredProcedureModule
                 return Results.Ok();
             });
 
+        app.MapGet("/stored-procedure-get-watches", async (AppDbcontext dbContext) =>
+        {
+            var watches = await dbContext.Watches.FromSqlRaw("EXEC GetAllWatches").ToListAsync();
+            return Results.Ok(watches);
+        });
+
+        app.MapGet("/stored-procedure-get-watch-by-id/{watchId:int}",
+            async (int watchId, [FromServices] AppDbcontext dbContext) =>
+            {
+                var watch = await dbContext.Watches
+                    .FromSqlInterpolated($"EXEC GetWatchById @WatchId={watchId}")
+                    .ToListAsync()
+                    .ContinueWith(task => Enumerable.Select(task.Result, w => new WatchDto
+                    {
+                        Watch_Id = w.Watch_Id,
+                        Profile_Id = w.Profile_Id,
+                        Media_Id = w.Media_Id,
+                        Watch_Date = w.Watch_Date,
+                        Status = w.Status,
+                        Pause_Time = w.Pause_Time
+                    }).FirstOrDefault());
+
+                return watch == null
+                    ? Results.NotFound()
+                    : Results.Ok(watch);
+            });
+
         app.MapPut("/stored-procedure-update-watch-by-id",
             async ([FromBody] UpdateWatchRequest updateWatchRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -25,36 +52,11 @@ public static class WatchesStoredProcedureModule
                 return Results.Ok();
             });
 
-        app.MapGet("/stored-procedure-get-watches", async (AppDbcontext dbContext) =>
-        {
-            var watches = await dbContext.Watches.FromSqlRaw("EXEC GetAllWatches").ToListAsync();
-            return Results.Ok(watches);
-        });
-
-        app.MapGet("/stored-procedure-get-watch-by-id/{watchId:int}", async (int watchId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var watch = await dbContext.Watches
-                .FromSqlInterpolated($"EXEC GetWatchById @WatchId={watchId}")
-                .ToListAsync()
-                .ContinueWith(task => task.Result.Select(w => new WatchDto()
-                {
-                    Watch_Id = w.Watch_Id,
-                    Profile_Id = w.Profile_Id,
-                    Media_Id = w.Media_Id,
-                    Watch_Date = w.Watch_Date,
-                    Status = w.Status,
-                    Pause_Time = w.Pause_Time
-                }).FirstOrDefault());
-
-            return watch == null
-                ? Results.NotFound()
-                : Results.Ok(watch);
-        });
-
-        app.MapDelete("/stored-procedure-delete-watch-by-id/{watchId}", async (int watchId, [FromServices] AppDbcontext dbContext) =>
-        {
-            await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteWatchById @WatchId={watchId}");
-            return Results.Ok();
-        });
+        app.MapDelete("/stored-procedure-delete-watch-by-id/{watchId}",
+            async (int watchId, [FromServices] AppDbcontext dbContext) =>
+            {
+                await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteWatchById @WatchId={watchId}");
+                return Results.Ok();
+            });
     }
 }

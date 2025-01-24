@@ -10,7 +10,6 @@ public static class InvitationsModule
 {
     public static void AddInvitationEndpoints(this IEndpointRouteBuilder app)
     {
-        // Create Invitation
         app.MapPost("/invitations",
             async ([FromBody] CreateInvitationRequest createInvitationRequest, [FromServices] AppDbcontext dbContext) =>
             {
@@ -24,6 +23,12 @@ public static class InvitationsModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(invitation);
             });
+
+        app.MapGet("/invitations", async (AppDbcontext dbContext) =>
+        {
+            var invitations = await dbContext.Invitations.ToListAsync();
+            return Results.Ok(invitations);
+        });
         
         app.MapPut("/invitations/{invitationId}", async (int invitationId, [FromBody] UpdateInvitationRequest updateInvitationRequest, [FromServices] AppDbcontext dbContext) =>
         {
@@ -31,7 +36,6 @@ public static class InvitationsModule
 
             if (invitation != null)
             {
-                // Only update if the new value is not null
                 if (updateInvitationRequest.Inviter_Id.HasValue)
                 {
                     invitation.Inviter_Id = updateInvitationRequest.Inviter_Id.Value;
@@ -50,16 +54,7 @@ public static class InvitationsModule
                 return Results.NotFound();
             }
         });
-
-
-        // Get All Invitations
-        app.MapGet("/invitations", async (AppDbcontext dbContext) =>
-        {
-            var invitations = await dbContext.Invitations.ToListAsync();
-            return Results.Ok(invitations);
-        });
         
-        // Delete Invitation by ID
         app.MapDelete("/invitations/{id:int}", async (int id, [FromServices] AppDbcontext dbContext) =>
         {
             var invitation = await dbContext.Invitations.FirstOrDefaultAsync(s => s.Invitation_Id == id);

@@ -7,7 +7,7 @@ using DataProcessingBS.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddXmlSerializerFormatters();  // Allows XML responses alongside JSON
+builder.Services.AddControllers().AddXmlSerializerFormatters(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 
@@ -20,7 +20,6 @@ builder.Services.AddLogging();
 
 builder.Services.AddSwaggerGen();
 
-// CORS setup for React app, will be used eventually to connect our front end
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -31,7 +30,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Database configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
@@ -44,26 +42,22 @@ builder.Services.AddDbContext<AppDbcontext>(options =>
 
 var app = builder.Build();
 
-
 app.UseCors("AllowReactApp");
 
-// Middleware configuration, commented out since Api Key authentication is not fully implemented yet
 app.UseMiddleware<ApiKeyMiddleware>();
-
-// CORS policy application
 
 app.MapRazorPages();
 
 app.UseSwagger();  
-app.UseSwaggerUI();  // Swagger UI for API documentation
+app.UseSwaggerUI();  
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
 
-//app.AddExternalMovieEndpoints();
 
+app.AddExternalMovieEndpoints();
 app.AddWatchesStoredProcedureEndpoints();
 app.AddWatchListsStoredProcedureEndpoints();
 app.AddSubscriptionStoredProcedureEndpoints();
@@ -76,8 +70,6 @@ app.AddEpisodeStoredProcedureEndpoints();
 app.AddMediaStoredProcedureEndpoints();
 app.AddSubtitlesStoredProcedureEndpoints();
 app.AddGenresStoredProcedureEndpoints();
-
 app.UseDeveloperExceptionPage();
-
 
 app.Run();

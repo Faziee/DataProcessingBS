@@ -10,23 +10,50 @@ public static class SeriesModule
 {
     public static void AddSeriesEndpoints(this IEndpointRouteBuilder app)
     {
-        // Create Series
-        app.MapPost("/series", async ([FromBody] CreateSeriesRequest createSeriesRequest, [FromServices] AppDbcontext dbContext) =>
-        {
-            var series = new Series()
+        app.MapPost("/series",
+            async ([FromBody] CreateSeriesRequest createSeriesRequest, [FromServices] AppDbcontext dbContext) =>
             {
-                Genre_Id = createSeriesRequest.Genre_Id,
-                Title = createSeriesRequest.Title,
-                Age_Rating = createSeriesRequest.Age_Rating
-            };
+                var series = new Series
+                {
+                    Genre_Id = createSeriesRequest.Genre_Id,
+                    Title = createSeriesRequest.Title,
+                    Age_Rating = createSeriesRequest.Age_Rating
+                };
 
-            await dbContext.Series.AddAsync(series);
-            await dbContext.SaveChangesAsync();
+                await dbContext.Series.AddAsync(series);
+                await dbContext.SaveChangesAsync();
+                return Results.Ok(series);
+            });
+
+        app.MapGet("/series", async (AppDbcontext dbContext) =>
+        {
+            var series = await dbContext.Series.ToListAsync();
             return Results.Ok(series);
         });
 
-        // Update Series by Series_Id
-        app.MapPut("/series/{seriesId}", async (int seriesId, [FromBody] UpdateSeriesRequest updateSeriesRequest, [FromServices] AppDbcontext dbContext) =>
+        app.MapGet("/series/{seriesId:int}/episodes", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var episodes = await dbContext.Episodes
+                .FromSqlRaw("EXEC GetEpisodesBySeriesId @SeriesId={0}", seriesId)
+                .ToListAsync();
+
+            return episodes.Count == 0
+                ? Results.NotFound(new { Message = "No episodes found for the given series." })
+                : Results.Ok(episodes);
+        });
+
+        app.MapGet("/series/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
+        {
+            var series = await dbContext.Series
+                .FirstOrDefaultAsync(x => x.Series_Id == seriesId);
+
+            return series == null
+                ? Results.NotFound()
+                : Results.Ok(series);
+        });
+
+        app.MapPut("/series/{seriesId}", async (int seriesId, [FromBody] UpdateSeriesRequest updateSeriesRequest,
+            [FromServices] AppDbcontext dbContext) =>
         {
             var series = await dbContext.Series.FirstOrDefaultAsync(x => x.Series_Id == seriesId);
 
@@ -39,44 +66,10 @@ public static class SeriesModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok(series);
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
 
-        // Get All Series
-        app.MapGet("/series", async (AppDbcontext dbContext) =>
-        {
-            var series = await dbContext.Series.ToListAsync();
-            return Results.Ok(series);
-        });
-        
-        // Get Episodes by Series_Id
-        app.MapGet("/series/{seriesId:int}/episodes", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var episodes = await dbContext.Episodes
-                .FromSqlRaw("EXEC GetEpisodesBySeriesId @SeriesId={0}", seriesId)
-                .ToListAsync();
-
-            return episodes.Count == 0
-                ? Results.NotFound(new { Message = "No episodes found for the given series." })
-                : Results.Ok(episodes);
-        });
-
-        
-        // Get Series by Series_Id
-        app.MapGet("/series/{seriesId:int}", async (int seriesId, [FromServices] AppDbcontext dbContext) =>
-        {
-            var series = await dbContext.Series
-                .FirstOrDefaultAsync(x => x.Series_Id == seriesId);
-
-            return series == null
-                ? Results.NotFound()
-                : Results.Ok(series);
-        });
-
-        // Delete Series by Series_Id
         app.MapDelete("/series/{seriesId}", async (int seriesId, AppDbcontext dbContext) =>
         {
             var series = await dbContext.Series.FirstOrDefaultAsync(x => x.Series_Id == seriesId);
@@ -87,10 +80,8 @@ public static class SeriesModule
                 await dbContext.SaveChangesAsync();
                 return Results.Ok();
             }
-            else
-            {
-                return Results.NotFound();
-            }
+
+            return Results.NotFound();
         });
     }
 }
