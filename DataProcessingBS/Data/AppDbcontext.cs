@@ -33,6 +33,7 @@ public class AppDbcontext : DbContext
         
         modelBuilder.Entity<MovieDto>().HasNoKey();
 
+        modelBuilder.Entity<SubscriptionDto>().HasNoKey();
         
         // Define relationship between Account and Profile
         modelBuilder.Entity<Profile>()

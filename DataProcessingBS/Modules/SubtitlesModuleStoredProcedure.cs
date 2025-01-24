@@ -63,7 +63,6 @@ public static class SubtitlesModuleStoredProcedure
                 ? Results.NotFound() 
                 : Results.Ok(subtitleDto);
         });
-
         
         /*// Get subtitles by media ID
         app.MapGet("/stored-procedure-get-subtitles-by-media/{mediaId:int}", async (int mediaId, [FromServices] AppDbcontext dbContext) =>
