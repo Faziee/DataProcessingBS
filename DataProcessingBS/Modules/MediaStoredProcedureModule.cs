@@ -19,7 +19,7 @@ public static class MediaStoredProcedureModule
                 return Results.Ok();
             });
         
-        app.MapGet("/procedure-get-media", async (AppDbcontext dbContext) =>
+        app.MapGet("/get-media", async (AppDbcontext dbContext) =>
         {
             var media = await dbContext.Media
                 .Select(m => new MediaDto
