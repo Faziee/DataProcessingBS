@@ -1,0 +1,50 @@
+<form [formGroup]="movieForm" (ngSubmit)="onSubmit()" class="p-6 bg-[#181818] rounded-lg">
+  <h2 class="text-2xl text-white mb-6">Add A New Movie</h2>
+
+  <div class="grid gap-4">
+    <!-- Title -->
+    <span class="p-float-label w-full">
+      <input pInputText formControlName="title" class="w-full bg-neutral-800 border-neutral-700" />
+      <label>Title</label>
+    </span>
+
+    <!-- Genre Dropdown -->
+    <span class="p-float-label w-full">
+      <p-dropdown formControlName="genre_Id" [options]="genres"
+                  styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+      <label>Genre</label>
+    </span>
+
+    <!-- Age Rating Dropdown -->
+    <span class="p-float-label w-full">
+      <p-dropdown fluid="true" appendTo="body" formControlName="age_Rating" [options]="ageRatings"
+                  styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+      <label>Age Rating</label>
+    </span>
+
+    <!-- Quality Dropdown -->
+    <span class="p-float-label w-full">
+      <p-dropdown fluid="true" appendTo="body" formControlName="quality" [options]="qualities"
+                  styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+      <label>Quality</label>
+    </span>
+
+    <!-- Checkbox for Has Subtitles -->
+    <div class="flex items-center gap-2">
+      <p-checkbox binary="true" formControlName="has_Subtitles" [style]="{ width: '1rem', height: '1rem' }"></p-checkbox>
+      <label class="text-white">Has Subtitles</label>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end gap-3 mt-4">
+      <button type="button" (click)="onCancel()"
+              class="px-4 py-2 bg-neutral-600 hover:bg-neutral-500 text-white rounded transition-colors">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="!movieForm.valid"
+              class="px-4 py-2 bg-[#E50914] hover:bg-[#E50914]/80 text-white rounded transition-colors disabled:bg-neutral-600">
+        Add Movie
+      </button>
+    </div>
+  </div>
+</form>

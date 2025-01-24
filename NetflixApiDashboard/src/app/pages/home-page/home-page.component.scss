@@ -1,0 +1,73 @@
+
+.main-title-card-container{
+  padding-top: 2rem;
+}
+
+.hero_banner {
+  position: relative;
+
+  .banner-image {
+    width: 100%;
+    mask-image: linear-gradient(to right, transparent, black 75%);
+  }
+}
+
+.hero-caption {
+  position: absolute;
+  width: 100%;
+  padding-left: 6%;
+  bottom: 0;
+
+  .caption-img {
+    width: 90%;
+    max-width: 420px;
+    margin-bottom: 30px;
+  }
+}
+
+.caption-text p {
+  max-width: 700px;
+  font-size: 17px;
+  margin-bottom: 20px;
+}
+
+.banner-btn-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 50px;
+
+  .btn-banner {
+    border: 0;
+    outline: 0;
+    padding: 8px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    background: lightgray;
+    border-radius: 4px;
+    cursor: pointer;
+
+    img {
+      width: 25px;
+    }
+
+    &:hover {
+      background: #ffffffbf;
+    }
+
+    &.dark-btn {
+      color: #fff;
+      background: #6d6d6eb3;
+
+      &:hover {
+        background: #6d6d6e66;
+      }
+    }
+  }
+}
+
+.more-cards {
+  padding-left: 6%;
+}

@@ -1,0 +1,33 @@
+<form [formGroup]="seriesForm" (ngSubmit)="onSubmit()" class="p-6 bg-[#181818] rounded-lg">
+  <h2 class="text-2xl text-white mb-6">Add New Series</h2>
+
+  <div class="grid gap-4">
+       <span class="p-float-label w-full">
+         <input pInputText formControlName="Title" class="w-full bg-neutral-800 border-neutral-700" />
+         <label>Title</label>
+       </span>
+
+    <span class="p-float-label w-full">
+         <p-dropdown formControlName="Genre_Id" [options]="genres"
+                     styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+         <label>Genre</label>
+       </span>
+
+    <span class="p-float-label w-full">
+         <p-dropdown fluid="true" appendTo="body" formControlName="Age_Rating" [options]="ageRatings"
+                     styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+         <label>Age Rating</label>
+       </span>
+
+    <div class="flex justify-end gap-3 mt-4">
+      <button type="button" (click)="onCancel()"
+              class="px-4 py-2 bg-neutral-600 hover:bg-neutral-500 text-white rounded transition-colors">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="!seriesForm.valid"
+              class="px-4 py-2 bg-[#E50914] hover:bg-[#E50914]/80 text-white rounded transition-colors disabled:bg-neutral-600">
+        Add Series</button>
+    </div>
+
+  </div>
+</form>

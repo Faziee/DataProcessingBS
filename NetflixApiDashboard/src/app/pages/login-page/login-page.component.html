@@ -1,0 +1,150 @@
+<div class="min-h-screen bg-black bg-opacity-75 bg-[url('/public/background_banner.jpg')] bg-cover bg-center bg-blend-darken px-8 py-5">
+  <img src="assets/logo.png" alt="logo" class="w-[150px]" />
+
+  <div class="max-w-[450px] mx-auto mt-8 bg-black bg-opacity-75 rounded p-[60px]">
+    <h1 class="text-3xl font-medium mb-7 text-white">{{ signState }}</h1>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-3">
+      <div class="flex flex-col gap-3">
+        <span class="p-float-label">
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            class="w-full h-[50px] bg-[#333] text-white rounded"
+          />
+          <label for="email" class="text-gray-400">Email</label>
+        </span>
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+          <small class="p-error">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              Email is required
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              Please enter a valid email
+            }
+          </small>
+        }
+
+        <span class="p-float-label">
+          <p-password
+            id="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="w-full h-[50px] bg-[#333]"
+            inputStyleClass="w-full h-[50px] bg-[#333] text-white"
+          >
+          </p-password>
+          <label for="password" class="text-gray-400">Password</label>
+        </span>
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          <small class="p-error">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              Password is required
+            }
+            @if (loginForm.get('password')?.errors?.['minlength']) {
+              Password must be at least 4 characters
+            }
+          </small>
+        }
+
+        @if (signState === 'Sign In') {
+          <span class="p-float-label">
+            <p-password
+              id="apiKey"
+              formControlName="apiKey"
+              [toggleMask]="true"
+              [feedback]="false"
+              styleClass="w-full h-[50px] bg-[#333]"
+              inputStyleClass="w-full h-[50px] bg-[#333] text-white"
+            >
+            </p-password>
+            <label for="apiKey" class="text-gray-400">API Key</label>
+          </span>
+          @if (loginForm.get('apiKey')?.touched && loginForm.get('apiKey')?.invalid) {
+            <small class="p-error">
+              @if (loginForm.get('apiKey')?.errors?.['required']) {
+                API Key is required
+              }
+              @if (loginForm.get('apiKey')?.errors?.['minlength']) {
+                API Key must be at least 4 characters
+              }
+            </small>
+          }
+        }
+
+        @if (signState === 'Sign Up') {
+          <div class="payment-method">
+            <p-dropdown
+              formControlName="paymentMethod"
+              [options]="paymentMethods"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select Payment Method"
+              styleClass="w-full h-[50px] bg-[#333]"
+              [style]="{'background-color': '#333'}"
+            >
+              <ng-template pTemplate="item" let-method>
+                <div class="text-white">{{ method.label }}</div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        }
+
+        @if (errorMessage) {
+          <p-message severity="error" [text]="errorMessage" styleClass="w-full"></p-message>
+        }
+
+        <p-button
+          type="submit"
+          [label]="isLoading ? 'Processing...' : signState"
+          [loading]="isLoading"
+          [disabled]="loginForm.invalid || isLoading"
+          styleClass="w-full p-button-danger"
+        ></p-button>
+
+        <div class="flex items-center justify-between text-[#b3b3b3] text-sm mt-4">
+          <div class="flex items-center gap-[5px]">
+            <p-checkbox
+              [binary]="true"
+              inputId="rememberMe"
+              styleClass="text-white"
+            ></p-checkbox>
+            <label  class="text-white">Remember Me</label>
+          </div>
+          <p-button
+            label="Need Help?"
+            link
+            (onClick)="needHelpClicked()"
+            styleClass="text-[#b3b3b3]"
+          ></p-button>
+        </div>
+      </div>
+    </form>
+
+    <div class="mt-10 text-[#737373]">
+      @if (signState === 'Sign In') {
+        <p>
+          New?
+          <p-button
+            label="Sign Up Now"
+            link
+            (onClick)="toggleSignState()"
+            styleClass="text-white font-medium ml-2"
+          ></p-button>
+        </p>
+      } @else {
+        <p>
+          Already have an account?
+          <p-button
+            label="Sign In Now"
+            link
+            (onClick)="toggleSignState()"
+            styleClass="text-white font-medium ml-2"
+          ></p-button>
+        </p>
+      }
+    </div>
+  </div>
+</div>

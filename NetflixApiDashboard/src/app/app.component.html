@@ -1,0 +1,9 @@
+@if (this.authService.isLoggedIn()){
+  <app-navbar></app-navbar>
+}
+<router-outlet></router-outlet>
+
+<app-footer></app-footer>
+<p-dialog></p-dialog>
+<p-confirm-dialog></p-confirm-dialog>
+<p-toast position="bottom-right"></p-toast>

@@ -1,0 +1,28 @@
+<div class="navbar">
+  <div class="navbar-left">
+    <img src="./assets/logo.png" alt="logo" />
+    <button class="hamburger-menu" onclick="toggleDropdown()">☰</button>
+      <li style="list-style: none;"><a href="/home">Home</a></li>
+    <ul class="menu">
+      <li><a routerLink="/series">Tv Shows</a></li>
+      <li><a href="/movie">Movies</a></li>
+      <li><a href="#">New and Popular</a></li>
+      <li><a href="#">My List</a></li>
+      <li><a href="#">Browse by language</a></li>
+    </ul>
+  </div>
+  <div class="navbar-right">
+    <img src="./assets/search_icon.svg" alt="search" class="icons" />
+    <p>{{ this.userEmail || 'User Name' }}</p>
+    <img src="./assets/bell_icon.svg" alt="bell" class="icons" />
+    <div class="navbar-profile">
+      <img src="./assets/profile_img.png" alt="profile" class="profile" />
+      <img src="./assets/caret_icon.svg" alt="dropdown" />
+      <div class="dropdown">
+        <p><a routerLink="/settings" class="no-decoration">Settings</a></p>
+        <p><a routerLink="/api" class="no-decoration">API</a></p>
+        <p style="text-decoration: underline;" (click)="onSignOutClicked()">Sign out</p>
+      </div>
+    </div>
+  </div>
+</div>

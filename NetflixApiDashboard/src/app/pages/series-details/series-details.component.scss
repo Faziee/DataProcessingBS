@@ -1,0 +1,51 @@
+.series-details {
+  padding: 20px;
+  color: #fff;
+  background-color: #141414;
+  min-height: 100vh;
+  padding-top: calc(80px + 1rem);
+}
+
+.series-info {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.series-info h1 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.episode-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.episode-list h2{
+  padding: 10px;
+}
+
+.episode-card {
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.episode-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.episode-duration {
+  font-size: 14px;
+  color: #bbb;
+}
+
+.no-episodes {
+  color: #bbb;
+  font-size: 16px;
+  text-align: center;
+}

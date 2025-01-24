@@ -1,0 +1,60 @@
+<div class="max-w-2xl mx-auto min-h-screen px-4">
+  <p-card styleClass="bg-gradient-to-b from-neutral-800 to-neutral-900 shadow-lg border-none">
+    <h2 class="mx-auto text-center text-red-500 text-3xl mb-6">
+      {{series.title}}
+    </h2>
+    <h2 class="text-center text-netflix-red text-2xl mb-6">Add New Episode</h2>
+
+    <form [formGroup]="episodeForm" (ngSubmit)="onSubmit()">
+      <div class="grid gap-4">
+        <div class="col-12 md:col-6">
+             <span class="p-float-label w-full">
+               <label>Season Number</label>
+               <p-inputNumber formControlName="Season_Number"  [showButtons]="true" class="w-full" inputStyleClass="w-full bg-neutral-800 border-neutral-700" />
+             </span>
+        </div>
+
+        <div class="col-12 md:col-6">
+             <span class="p-float-label w-full">
+               <label>Episode Number</label>
+               <p-inputNumber formControlName="Episode_Number" [showButtons]="true" class="w-full" inputStyleClass="w-full bg-neutral-800 border-neutral-700" />
+             </span>
+        </div>
+
+        <div class="col-12">
+             <span class="p-float-label w-full">
+               <label>Title</label>
+
+               <input pInputText formControlName="Title" class="w-full bg-neutral-800 border-neutral-700" />
+             </span>
+        </div>
+
+        <div class="col-12">
+             <span class="p-float-label w-full">
+               <label>Duration (minutes)</label>
+               <p-inputNumber formControlName="Duration" [showButtons]="true" class="w-full" inputStyleClass="w-full bg-neutral-800 border-neutral-700" />
+             </span>
+        </div>
+
+        <div class="col-12 md:col-6">
+             <span class="p-float-label w-full">
+               <label>Age Rating</label>
+               <p-dropdown formControlName="Age_Rating" [options]="ageRatings" styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+             </span>
+        </div>
+
+        <div class="col-12 md:col-6">
+             <span class="p-float-label w-full">
+               <label>Quality</label>
+               <p-dropdown formControlName="Quality" [options]="qualityOptions" styleClass="w-full" [pStyleClass]="'bg-neutral-800 border-neutral-700'" />
+             </span>
+        </div>
+
+        <div class="flex justify-end gap-3 col-12 mt-4">
+          <p-button label="Cancel" (onClick)="onCancel()" styleClass="p-button-secondary" />
+          <p-button label="Add Episode" type="submit" [disabled]="!episodeForm.valid" />
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>

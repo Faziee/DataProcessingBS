@@ -1,0 +1,29 @@
+<div class="px-4 md:px-12 py-6">
+  <h2 class="text-2xl text-white font-bold mb-4">{{ title }}</h2>
+  <div
+    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+  >
+    <div
+      *ngFor="let card of apiData"
+      class="transform transition-transform duration-300 hover:scale-105 hover:z-10"
+    >
+      <a
+        [routerLink]="['/player', card.id]"
+        class="block rounded-lg overflow-hidden shadow-lg hover:shadow-2xl"
+      >
+        <div class="relative pt-[56.25%] overflow-hidden">
+          <img
+            [src]="'https://image.tmdb.org/t/p/w500' + card.backdropPath"
+            [alt]="card.originalTitle || 'No Title'"
+            class="absolute top-0 left-0 w-full h-full object-cover"
+          >
+        </div>
+        <div class="bg-neutral-800 p-3">
+          <p class="text-white text-sm truncate">
+            {{ card.originalTitle || 'No Title Available' }}
+          </p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

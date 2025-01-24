@@ -1,0 +1,32 @@
+<div class="home">
+  <div class="hero_banner">
+    <img src="./assets/hero_banner.jpg" alt="banner" class="banner-image" />
+    <div class="hero-caption">
+      <img src="/assets/hero_title.png" alt="title for the banner" class="caption-img" />
+      <p>
+        Discovering his ties to a secret ancient order, a young man living in modern Istanbul embarks on a quest to save the city from an immortal enemy.
+      </p>
+      <div class="banner-btn-container">
+        <button class="btn-banner">
+          <img src="./assets/play_icon.png" alt="play button" />
+          Play
+        </button>
+        <button class="btn-banner dark-btn">
+          <img src="./assets/info_icon.png" alt="information button" />
+          More Information
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-title-card-container mt-12">
+    <app-title-card></app-title-card>
+  </div>
+
+  <div class="more-cards mt-12">
+    <app-title-card [title]="'Blockbuster movies'" [category]="'top_rated'"></app-title-card>
+    <app-title-card [title]="'Only on Netflix'" [category]="'popular'"></app-title-card>
+    <app-title-card [title]="'Upcoming'" [category]="'upcoming'"></app-title-card>
+    <app-title-card [title]="'Top Pics for you'" [category]="'now_playing'"></app-title-card>
+  </div>
+</div>
